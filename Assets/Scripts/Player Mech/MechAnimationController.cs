@@ -1,6 +1,4 @@
 using System;
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 //TODO: Make this agnostic of the magic numbers inside the animation controller (Like 0.5 for walking, 1.0 for running for example)
