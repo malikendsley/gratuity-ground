@@ -2,25 +2,6 @@ using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-
-[CreateAssetMenu(fileName = "MechLocomotionConfig", menuName = "Configs/MechLocomotionConfig", order = 1)]
-public class MechLocomotionConfig : ScriptableObject
-{
-    //Walking speed of the mech
-    public float walkSpeed;
-    //Running speed of the mech
-    public float runSpeed;
-    //How fast the mech ramps between its various speeds
-    public float acceleration;
-    public float deceleration;
-    //Rotation speed of the mech
-    public float rotationSpeed;
-    //How high this mech can jump
-    public float jumpHeight;
-    //Beyond this distance, mechs will run instead of walk to their destination
-    public float runThreshold;
-}
-
 public class MechController : MonoBehaviour
 {
 
@@ -63,7 +44,7 @@ public class MechController : MonoBehaviour
         // TODO: Refactor this and separate input from mech movement
         // Gather input
         movementVector = playerControls.ReadValue<Vector2>();
-        Debug.Log("Movement vector: " + movementVector);
+        //Debug.Log("Movement vector: " + movementVector);
 
         //TODO: Y needs to be flipped because for some reason the animations are backwards on the mech due to the way the bones were handled
         movementVector.y = -movementVector.y;
@@ -73,7 +54,7 @@ public class MechController : MonoBehaviour
         currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, acceleration * Time.deltaTime);
         OnSpeedChangeAction?.Invoke(currentSpeed);
         Vector3 movement = currentSpeed * Time.deltaTime * transform.TransformDirection(Vector3.forward);
-        Debug.Log("Calling Move with: " + movement);
+        //Debug.Log("Calling Move with: " + movement);
         characterController.Move(movement);
 
         Rotate(movementVector);

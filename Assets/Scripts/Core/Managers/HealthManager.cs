@@ -8,86 +8,96 @@ using UnityEngine;
 using System.Runtime.CompilerServices;
 [assembly: InternalsVisibleTo("EditHealthTests")]
 
-[CreateAssetMenu(fileName = "HealthConfig", menuName = "Mechs/HealthConfig")]
-public class HealthConfig : ScriptableObject
+namespace Endsley
 {
-    public int maxHealth;
-    public int maxShields;
-}
-
-public class HealthManager : MonoBehaviour, IDamageable
-{
-    [SerializeField] internal HealthConfig healthConfig;
-
-    private IDie deathBehavior;
-    private int currentHealth;
-    private int currentShields;
-    private bool isDead = false;
-    // For all instances of damage
-    public event Action<int> OnDamageTaken;
-    //For health and shields specific damage (UI)
-    public event Action<int> OnHealthDamageTaken;
-    public event Action<int> OnShieldsDamageTaken;
-
-    internal void Start()
+    public class HealthManager : MonoBehaviour, IDamageable
     {
-        currentHealth = healthConfig.maxHealth;
-        currentShields = healthConfig.maxShields;
+        [SerializeField] internal HealthConfig healthConfig;
 
-        if (!TryGetComponent(out deathBehavior))
-        {
-            Debug.LogWarning("No death behavior attached.");
-        }
-    }
+        private IDie deathBehavior;
+        [SerializeField][ReadOnly] int currentHealth;
+        [SerializeField][ReadOnly] int currentShields;
+        private bool isDead = false;
+        // For all instances of damage
+        public event Action<int> OnDamageTaken;
+        //For health and shields specific damage (UI)
+        public event Action<int> OnHealthDamageTaken;
+        public event Action<int> OnShieldsDamageTaken;
 
-    public void TakeDamage(int damage)
-    {
-        //TODO: potential YAGNI but shield overkill mechanic might be interesting
-        OnDamageTaken?.Invoke(damage);
-        if (damage <= 0)
+        internal void Start()
         {
-            Debug.LogWarning("<1 damage taken, this could indicate a problem");
-            return;
-        }
-        else
-        {
-            // You have shields left
-            if (currentShields > 0)
+            currentHealth = healthConfig.maxHealth;
+            currentShields = healthConfig.maxShields;
+
+            if (!TryGetComponent(out deathBehavior))
             {
-                currentShields = Math.Max(currentShields - damage, 0);
-                OnShieldsDamageTaken?.Invoke(damage);
+                Debug.LogWarning("No death behavior attached.");
             }
-            else
+        }
+
+        public void TakeDamage(int damage)
+        {
+            if (!isDead)
             {
-                // You have health (hull) left
-                if (currentHealth > 0)
+                Debug.Log("HealthManager: Damage taken");
+                //TODO: potential YAGNI but shield overkill mechanic might be interesting
+                OnDamageTaken?.Invoke(damage);
+                if (damage < 0)
                 {
-                    currentHealth = Math.Max(currentHealth - damage, 0);
-                    OnHealthDamageTaken?.Invoke(damage);
+                    Debug.LogWarning("<0 damage taken, this could indicate a problem");
+                    return;
                 }
                 else
                 {
-                    Debug.Log("This object should be dead");
+                    // You have shields left
+                    if (currentShields > 0)
+                    {
+                        currentShields = Math.Max(currentShields - damage, 0);
+                        OnShieldsDamageTaken?.Invoke(damage);
+                    }
+                    else
+                    {
+                        // You have health (hull) left
+                        if (currentHealth > 0)
+                        {
+                            currentHealth = Math.Max(currentHealth - damage, 0);
+                            OnHealthDamageTaken?.Invoke(damage);
+                        }
+                        else
+                        {
+                            Debug.Log("This object should be dead");
+                        }
+                    }
+                }
+                if (!isDead && currentHealth == 0 && currentShields == 0)
+                {
+                    isDead = true;
+                    deathBehavior?.Die();
                 }
             }
         }
-        if (!isDead && currentHealth == 0 && currentShields == 0)
+
+        public void SetHealthManagerConfig(HealthConfig healthConfig)
         {
-            isDead = true;
-            deathBehavior?.Die();
+            this.healthConfig = healthConfig;
         }
-    }
 
-    public void SetHealthManagerConfig(HealthConfig healthConfig){
-        this.healthConfig = healthConfig;
-    }
+        public int GetCurrentHealth()
+        {
+            return currentHealth;
+        }
 
-    public int GetCurrentHealth(){
-        return currentHealth;
-    }
+        public int GetCurrentShields()
+        {
+            return currentShields;
+        }
 
-    public int GetCurrentShields(){
-        return currentShields;
-    }
+        public bool SetIsDead(bool value)
+        {
+            bool val = isDead;
+            isDead = true;
+            return val;
+        }
 
+    }
 }

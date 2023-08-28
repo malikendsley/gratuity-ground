@@ -71,6 +71,8 @@ public class HealthManagerTest
     }
     [Test]
     public void TakeDamage_TriggersEvents(){
+        Assert.False(wasEventFired);
+        Assert.False(mockDie.DieCalled);
         healthManager.TakeDamage(100);
         healthManager.TakeDamage(100);
         Assert.True(wasEventFired);

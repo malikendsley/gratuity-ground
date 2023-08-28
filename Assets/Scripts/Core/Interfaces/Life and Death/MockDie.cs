@@ -8,7 +8,8 @@ namespace Endsley
     {
         public event Action OnDie;
         public bool DieCalled { get; private set; } = false;
-        public void Die(){
+        public void Die()
+        {
             DieCalled = true;
             OnDie?.Invoke();
         }
