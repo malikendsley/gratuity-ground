@@ -16,8 +16,8 @@ namespace Endsley
 
         private void Awake()
         {
-            mechController.OnSpeedChangeAction += SetSpeed;
-            mechController.OnRotatingAction += SetRotating;
+            mechController.OnSpeedChange += SetSpeed;
+            mechController.OnRotationChange += SetRotating;
         }
 
         float NormalizeSpeed(float currentSpeed)
@@ -25,8 +25,8 @@ namespace Endsley
             //TODO: Same anim for backward and forwards walking until more are addeed
             currentSpeed = Math.Abs(currentSpeed);
 
-            float walkSpeed = mechController.GetMechLocomotionConfig().walkSpeed;
-            float runSpeed = mechController.GetMechLocomotionConfig().runSpeed;
+            float walkSpeed = mechController.LocomotionConfig.walkSpeed;
+            float runSpeed = mechController.LocomotionConfig.runSpeed;
 
             if (currentSpeed <= walkSpeed)
             {
@@ -46,13 +46,18 @@ namespace Endsley
         }
 
         // Allows animator to react to turning (including in-place)
-        void SetRotating(MechController.RotationDirection dir)
+        void SetRotating(float dir)
         {
+            Debug.Log("SetRotating called");
             // For now, just play the step animation at a slower speed, but allow it to be overriden by faster movements (turning while walking)
-            float newSpeed = (float)Math.Max(0.5, anim.GetFloat("Speed"));
-            anim.SetFloat("Speed", newSpeed);
-            speed = newSpeed;
-
+            if (dir == 0)
+            {
+                anim.SetBool("Rotating", false);
+            }
+            else
+            {
+                anim.SetBool("Rotating", true);
+            }
         }
 
         //TODO: Triggers for jump and bool for ground

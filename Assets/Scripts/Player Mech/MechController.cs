@@ -1,146 +1,138 @@
 using System;
 using UnityEngine;
 using UnityEngine.InputSystem;
+
 namespace Endsley
 {
-    public class MechController : MonoBehaviour
+    public class MechController : MonoBehaviour, IMechController
     {
 
         #region Serialized Fields
         [Header("Components")]
         [SerializeField] private MechLocomotionConfig locomotionConfig;
+        public MechLocomotionConfig LocomotionConfig => locomotionConfig;
+
         [SerializeField] private CharacterController characterController;
 
         [Header("Grounding")]
         [SerializeField] private Transform groundCheck;
         [SerializeField] private float checkDistance;
         [SerializeField] private LayerMask checkMask;
-
-        [Header("Input")]
-        [SerializeField] private InputAction moveControls;
-        [SerializeField] private InputAction jumpControls;
         #endregion
 
-        #region Private Variables
+        #region Input Variables
         private float targetSpeed = 0f;
         private float currentSpeed = 0f;
-        private Vector2 moveVector = Vector2.zero;
+        private bool tryJump = false;
+        #endregion
 
+        #region State Variables
         private float verticalVelocity;
         private const float Gravity = 9.81f;
+        private float rotationDelta = 0f;
+        private float lastRotationDelta = 0f;
+
+        private bool wasGrounded;
         private bool isGrounded;
+
         #endregion
 
         #region Events
-        public event Action<float> OnSpeedChangeAction;
-        public event Action<RotationDirection> OnRotatingAction;
-        public event Action OnJumpAction;
-        public event Action<bool> OnGroundStateChangeAction;
+        public event Action<float> OnSpeedChange;
+        public event Action<float> OnRotationChange;
+        public event Action OnJump;
+        public event Action<bool> OnGroundedChange;
         #endregion
 
-        #region Enums
-        public enum RotationDirection { CW, CCW }
-        #endregion
-
-        private void OnEnable()
+        // Start is called before the first frame update
+        void Start()
         {
-            moveControls.Enable();
-            jumpControls.Enable();
+            wasGrounded = isGrounded = Physics.CheckSphere(groundCheck.position, checkDistance, checkMask);
         }
 
-        private void OnDisable()
+        // Update is called once per frame
+        void Update()
         {
-            moveControls.Disable();
-            jumpControls.Disable();
+            // Controlled by Jump()
+            HandleGrounding();
+            // Controlled by UpdateControl()
+            HandleRot();
+            HandleMovement();
         }
 
-        void OnDrawGizmosSelected()
+        private void HandleGrounding()
         {
-            Gizmos.color = isGrounded ? Color.green : Color.red;
-            Gizmos.DrawSphere(groundCheck.position, checkDistance);
-        }
-
-
-        private void Update()
-        {
-
-            // TODO: Refactor this and separate input from mech movement
-            // Gather input
-            moveVector = moveControls.ReadValue<Vector2>();
-            Debug.Log("Jump input was " + (jumpControls.triggered ? "" : "not ") + "triggered");
-
-            // Delta type calculations
-            bool wasGrounded = isGrounded;
+            wasGrounded = isGrounded;
             isGrounded = Physics.CheckSphere(groundCheck.position, checkDistance, checkMask);
-            Debug.Log("Character is " + (isGrounded ? "" : "not ") + "grounded");
-
             if (wasGrounded != isGrounded)
             {
-                //NOTE: This may be noisy, provide a grace period? Alternatively, harden subscribers against noise (seems like more work)
-                OnGroundStateChangeAction?.Invoke(isGrounded);
+                OnGroundedChange?.Invoke(isGrounded);
             }
-
-            // Handle jumping
-
             if (isGrounded)
             {
-                if (jumpControls.triggered)
+                if (tryJump) //Should jump
                 {
                     verticalVelocity = locomotionConfig.jumpForce;
-                    OnJumpAction?.Invoke();
+                    OnJump?.Invoke();
                 }
             }
             else
             {
                 verticalVelocity -= Gravity * Time.deltaTime;
             }
+            // Consume the jump request anyway providing an "ignore" effect
+            tryJump = false;
+        }
 
-            //TODO: Y needs to be flipped because for some reason the animations are backwards on the mech due to the way the bones were handled
-            moveVector.y = -moveVector.y;
+        private void HandleRot()
+        {
+            transform.Rotate(0, rotationDelta, 0);
 
-            //NOTE: This is more player movement, will need to be pulled out
-            UpdateTargetSpeed(moveVector);
-            float acceleration = targetSpeed == 0f ? locomotionConfig.deceleration : locomotionConfig.acceleration;
+            if (rotationDelta != lastRotationDelta)
+            {
+                OnRotationChange?.Invoke(rotationDelta);
+                lastRotationDelta = rotationDelta;
+            }
+        }
+
+        private void HandleMovement()
+        {
+            float acceleration = (targetSpeed == 0f) ? locomotionConfig.deceleration : locomotionConfig.acceleration;
             currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, acceleration * Time.deltaTime);
-            OnSpeedChangeAction?.Invoke(currentSpeed);
-            //Debug.Log("Calling Move with: " + movement);
-            Vector3 movement = new Vector3(0, verticalVelocity * Time.deltaTime, 0) + currentSpeed * Time.deltaTime * transform.TransformDirection(Vector3.forward);
-            characterController.Move(movement);
-
-            Rotate(moveVector);
+            OnSpeedChange?.Invoke(currentSpeed);
+            // Add in jump motion and forward motion
+            Vector3 moveVector = new(0, verticalVelocity * Time.deltaTime, 0);
+            moveVector += currentSpeed * Time.deltaTime * transform.TransformDirection(Vector3.forward);
+            characterController.Move(moveVector);
         }
 
-        public void UpdateTargetSpeed(Vector2 movementVector)
+        public void UpdateControl(Vector2 ctrlVector)
         {
-            if (movementVector.y > 0)
-            {
-                targetSpeed = locomotionConfig.walkSpeed;
-            }
-            else if (movementVector.y < 0)
-            {
-                targetSpeed = -locomotionConfig.walkSpeed;
-            }
-            else
-            {
-                targetSpeed = 0;
-            }
+            //Extract forward / backward desired motion
+            //TODO: If on subsequent mech models, controls are flipped, undo "-"
+            targetSpeed = locomotionConfig.walkSpeed * -Math.Sign(ctrlVector.y);
+            //Extract rotation desire
+            rotationDelta = ctrlVector.x * locomotionConfig.rotationSpeed * Time.deltaTime;
         }
 
-        public void Rotate(Vector2 movementVector)
+        public void StopMoving()
         {
-            float rotationAmount = movementVector.x * locomotionConfig.rotationSpeed * Time.deltaTime;
-            transform.Rotate(0, rotationAmount, 0);
-            if (rotationAmount != 0)
-            {
-                //TODO: May need to flip
-                OnRotatingAction.Invoke(rotationAmount > 0 ? RotationDirection.CW : RotationDirection.CCW);
-            }
+            UpdateControl(new(0, 0));
+            tryJump = false;
         }
 
-        public MechLocomotionConfig GetMechLocomotionConfig()
+        public void RotateToHeading(float targetHeading)
         {
-            return locomotionConfig;
+            throw new NotImplementedException();
         }
 
+        public void Jump()
+        {
+            tryJump = true;
+        }
+
+        public Vector3 Position => transform.position;
+        public float CurrentSpeed => currentSpeed;
+        public bool IsGrounded => isGrounded;
     }
 }

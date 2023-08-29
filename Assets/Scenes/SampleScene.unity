@@ -400,7 +400,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 140823369}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0000000055221614, y: 0.99727607, z: -0.07375945, w: -0.000000074663234}
+  m_LocalRotation: {x: -0.0000000029715128, y: 0.99727607, z: -0.07375945, w: -0.000000040176804}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -495,8 +495,8 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.000000005293264, y: 0.9954887, z: -0.09488086, w: -0.000000055536862}
-  m_LocalPosition: {x: -22.616222, y: 12.266159, z: 14.322523}
+  m_LocalRotation: {x: -0.0000000035266072, y: 0.9954887, z: -0.09488086, w: -0.00000003700112}
+  m_LocalPosition: {x: -22.616222, y: 12.926159, z: 14.322523}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -651,7 +651,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 379411578}
   serializedVersion: 2
-  m_LocalRotation: {x: -0.0000000045781903, y: 0.99475443, z: -0.102292225, w: -0.000000044521233}
+  m_LocalRotation: {x: -0.000000004532241, y: 0.99475443, z: -0.102292225, w: -0.000000044074387}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -1766,7 +1766,7 @@ Transform:
   m_GameObject: {fileID: 1910879560}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: -22.616222, y: 12.266159, z: 14.322523}
+  m_LocalPosition: {x: -22.616222, y: 12.926159, z: 14.322523}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1791,7 +1791,7 @@ PrefabInstance:
     - target: {fileID: 2620995214399316074, guid: db7f873f0492a304f9f90440cd57692a,
         type: 3}
       propertyPath: m_LocalPosition.y
-      value: -0.66
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 2620995214399316074, guid: db7f873f0492a304f9f90440cd57692a,
         type: 3}
@@ -1840,6 +1840,11 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4315798797823018907, guid: db7f873f0492a304f9f90440cd57692a,
         type: 3}
+      propertyPath: groundCheck
+      value: 
+      objectReference: {fileID: 6626478991136577493}
+    - target: {fileID: 4315798797823018907, guid: db7f873f0492a304f9f90440cd57692a,
+        type: 3}
       propertyPath: checkDistance
       value: 0.2
       objectReference: {fileID: 0}
@@ -1848,11 +1853,122 @@ PrefabInstance:
       propertyPath: checkMask.m_Bits
       value: 64
       objectReference: {fileID: 0}
+    - target: {fileID: 4315798797823018907, guid: db7f873f0492a304f9f90440cd57692a,
+        type: 3}
+      propertyPath: locomotionConfig
+      value: 
+      objectReference: {fileID: 11400000, guid: 710c5a0d9bd693c42863d7627385037d,
+        type: 2}
+    - target: {fileID: 4315798797823018907, guid: db7f873f0492a304f9f90440cd57692a,
+        type: 3}
+      propertyPath: characterController
+      value: 
+      objectReference: {fileID: 6626478991136577494}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 4280978648988794225, guid: db7f873f0492a304f9f90440cd57692a,
+        type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 6626478991136577496}
   m_SourcePrefab: {fileID: 100100000, guid: db7f873f0492a304f9f90440cd57692a, type: 3}
+--- !u!4 &6626478991136577493 stripped
+Transform:
+  m_CorrespondingSourceObject: {fileID: 4117449791648668411, guid: db7f873f0492a304f9f90440cd57692a,
+    type: 3}
+  m_PrefabInstance: {fileID: 6626478991136577492}
+  m_PrefabAsset: {fileID: 0}
+--- !u!143 &6626478991136577494 stripped
+CharacterController:
+  m_CorrespondingSourceObject: {fileID: 2585163105307159107, guid: db7f873f0492a304f9f90440cd57692a,
+    type: 3}
+  m_PrefabInstance: {fileID: 6626478991136577492}
+  m_PrefabAsset: {fileID: 0}
+--- !u!1 &6626478991136577495 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 4280978648988794225, guid: db7f873f0492a304f9f90440cd57692a,
+    type: 3}
+  m_PrefabInstance: {fileID: 6626478991136577492}
+  m_PrefabAsset: {fileID: 0}
+--- !u!114 &6626478991136577496
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6626478991136577495}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b8d654bbfac2de43bb57798f9734529, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveControls:
+    m_Name: Move Controls
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 7573f717-06d7-4c03-bde4-42c3382d3171
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: WASD
+      m_Id: 840fbf04-92ed-4cb1-b574-c060b37a81fe
+      m_Path: 2DVector
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move Controls
+      m_Flags: 4
+    - m_Name: up
+      m_Id: eea3a33d-42c3-4db1-8473-721197537549
+      m_Path: <Keyboard>/w
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move Controls
+      m_Flags: 8
+    - m_Name: down
+      m_Id: 0f49e015-e05f-44e5-a198-34f04ff09755
+      m_Path: <Keyboard>/s
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move Controls
+      m_Flags: 8
+    - m_Name: left
+      m_Id: 0be0345e-b5be-4be6-8caa-08fd90c9c5ca
+      m_Path: <Keyboard>/a
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move Controls
+      m_Flags: 8
+    - m_Name: right
+      m_Id: 26cb4470-4d1c-40a1-a758-b4c9d4b05666
+      m_Path: <Keyboard>/d
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move Controls
+      m_Flags: 8
+    m_Flags: 0
+  jumpControls:
+    m_Name: Jump Controls
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 570ee34b-f21b-49e9-bb01-7afcf11e6d27
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 6e157a87-d7f9-4fd1-8ce8-32fa9089527f
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Jump Controls
+      m_Flags: 0
+    m_Flags: 0
 --- !u!1660057539 &9223372036854775807
 SceneRoots:
   m_ObjectHideFlags: 0
