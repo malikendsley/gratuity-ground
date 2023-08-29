@@ -7,10 +7,8 @@ namespace Endsley
     public class MechAnimationController : MonoBehaviour
     {
 
-        [SerializeField]
-        private Animator anim;
-        [SerializeField]
-        private MechController mechController;
+        [SerializeField] private Animator anim;
+        [SerializeField] private MechController mechController;
 
         [ReadOnly] public float speed;
 
@@ -18,6 +16,8 @@ namespace Endsley
         {
             mechController.OnSpeedChange += SetSpeed;
             mechController.OnRotationChange += SetRotating;
+            mechController.OnJump += () => anim.SetTrigger("Jump");
+            mechController.OnGroundedChange += grounded => anim.SetBool("Grounded", grounded);
         }
 
         float NormalizeSpeed(float currentSpeed)

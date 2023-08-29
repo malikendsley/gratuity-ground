@@ -645,6 +645,7 @@ GameObject:
   - component: {fileID: 6967436616765617559}
   - component: {fileID: 4592463823415128632}
   - component: {fileID: 2077186962314414345}
+  - component: {fileID: 529094493933014871}
   m_Layer: 3
   m_Name: MechContainer
   m_TagString: Untagged
@@ -682,13 +683,13 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e1954226cf60940b2ce5ac09cfabff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  locomotionConfig: {fileID: 0}
-  characterController: {fileID: 0}
-  groundCheck: {fileID: 0}
-  checkDistance: 0
+  locomotionConfig: {fileID: 11400000, guid: 710c5a0d9bd693c42863d7627385037d, type: 2}
+  characterController: {fileID: 2585163105307159107}
+  groundCheck: {fileID: 4117449791648668411}
+  checkDistance: 0.2
   checkMask:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 64
 --- !u!143 &2585163105307159107
 CharacterController:
   m_ObjectHideFlags: 0
@@ -770,6 +771,84 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f73120dfc4ed5da4ea21e41062beb3e2, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+--- !u!114 &529094493933014871
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 4280978648988794225}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 2b8d654bbfac2de43bb57798f9734529, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  moveControls:
+    m_Name: Move Controls
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 7573f717-06d7-4c03-bde4-42c3382d3171
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: WASD
+      m_Id: 840fbf04-92ed-4cb1-b574-c060b37a81fe
+      m_Path: 2DVector
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move Controls
+      m_Flags: 4
+    - m_Name: up
+      m_Id: eea3a33d-42c3-4db1-8473-721197537549
+      m_Path: <Keyboard>/w
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move Controls
+      m_Flags: 8
+    - m_Name: down
+      m_Id: 0f49e015-e05f-44e5-a198-34f04ff09755
+      m_Path: <Keyboard>/s
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move Controls
+      m_Flags: 8
+    - m_Name: left
+      m_Id: 0be0345e-b5be-4be6-8caa-08fd90c9c5ca
+      m_Path: <Keyboard>/a
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move Controls
+      m_Flags: 8
+    - m_Name: right
+      m_Id: 26cb4470-4d1c-40a1-a758-b4c9d4b05666
+      m_Path: <Keyboard>/d
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Move Controls
+      m_Flags: 8
+    m_Flags: 0
+  jumpControls:
+    m_Name: Jump Controls
+    m_Type: 0
+    m_ExpectedControlType: 
+    m_Id: 570ee34b-f21b-49e9-bb01-7afcf11e6d27
+    m_Processors: 
+    m_Interactions: 
+    m_SingletonActionBindings:
+    - m_Name: 
+      m_Id: 6e157a87-d7f9-4fd1-8ce8-32fa9089527f
+      m_Path: <Keyboard>/space
+      m_Interactions: 
+      m_Processors: 
+      m_Groups: 
+      m_Action: Jump Controls
+      m_Flags: 0
+    m_Flags: 0
 --- !u!1 &4401571678979592376
 GameObject:
   m_ObjectHideFlags: 0
