@@ -17,5 +17,5 @@ MonoBehaviour:
   acceleration: 2
   deceleration: 5
   rotationSpeed: 50
-  jumpHeight: 10
+  jumpForce: 10
   runThreshold: 10

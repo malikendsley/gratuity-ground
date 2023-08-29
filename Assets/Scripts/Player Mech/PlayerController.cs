@@ -1,14 +1,17 @@
 using UnityEngine;
 using UnityEngine.InputSystem;
 
-public class PlayerController : MonoBehaviour
+namespace Endsley
 {
-    private MechController mechController;
-
-    private void Awake()
+    public class PlayerController : MonoBehaviour
     {
-        mechController = GetComponent<MechController>();
-    }
+        private MechController mechController;
 
-    // Additional player-specific input handling
+        private void Awake()
+        {
+            mechController = GetComponent<MechController>();
+        }
+
+        // Additional player-specific input handling
+    }
 }
