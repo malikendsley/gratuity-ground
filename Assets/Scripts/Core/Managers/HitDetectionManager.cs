@@ -20,7 +20,7 @@ namespace Endsley
             {
                 if (TryGetComponent(out healthManager))
                 {
-                    Debug.Log("Health manager automatically applied.");
+                    //Debug.Log("Health manager automatically applied.");
                 }
                 else
                 {
@@ -32,7 +32,7 @@ namespace Endsley
         public void TakeDamage(int damage)
         {
             OnDamageTakenWithSource?.Invoke(damage, this);
-            if (parentHDM != null)
+            if (parentHDM)
             {
                 //NOTE: There are currently no reasons to know the damage source but it is easy to add. If the information is needed in the future, implement this branch.
                 parentHDM.OnDamageTakenWithSource?.Invoke(damage, this);
