@@ -14,7 +14,7 @@ namespace Endsley
         Dictionary<int, IWeapon> GetAvailableWeapons();
 
         // Fire individual weapons
-        void FireWeapon(int slot);
+        void FireWeapon(int slot, bool shouldAimAssist = false);
         void PrepWeapon(int slot);
         void StopWeapon(int slot);
 

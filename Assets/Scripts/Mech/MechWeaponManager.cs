@@ -12,6 +12,7 @@ namespace Endsley
         readonly Dictionary<int, IWeapon> weapons = new();
         readonly Dictionary<int, bool> weaponFireState = new();
         readonly Dictionary<int, bool> weaponPrepState = new();
+        readonly Dictionary<int, bool> weaponAimAssistState = new();
         readonly Dictionary<int, GameObject> weaponTargetState = new();
         public event Action<int> OnWeaponRegistered;
         public event Action<int> OnWeaponUnregistered;
@@ -24,20 +25,29 @@ namespace Endsley
             foreach (var item in weapons)
             {
                 int slot = item.Key;
+
+                // Check if the weapon should fire
                 if (weaponFireState[slot])
                 {
-                    weapons[slot].FireWeapon();
+                    // Check if aim assist should be applied
+                    bool shouldAimAssist = weaponAimAssistState.TryGetValue(slot, out bool assist) && assist;
+                    weapons[slot].FireWeapon(shouldAimAssist);  // Updated this line
                 }
+
+                // Check if the weapon should be prepped
                 if (weaponPrepState[slot])
                 {
                     weapons[slot].PrepWeapon();
                 }
+
+                // Check if the weapon has a target
                 if (weaponTargetState.TryGetValue(slot, out GameObject target))
                 {
                     weapons[slot].SetTarget(target);
                 }
             }
         }
+
 
         public void FireAllWeapons()
         {
@@ -47,12 +57,13 @@ namespace Endsley
             }
         }
 
-        public void FireWeapon(int slot)
+        public void FireWeapon(int slot, bool shouldAimAssist = false)
         {
             Debug.Log("Firing weapon in slot " + slot);
             if (CheckWeaponSlot(slot))
             {
                 weaponFireState[slot] = true;
+                weapons[slot].FireWeapon(shouldAimAssist);
             }
             else
             {

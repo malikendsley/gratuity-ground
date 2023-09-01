@@ -1,0 +1,75 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!319 &31900000
+AvatarMask:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: EnemyMechLegs
+  m_Mask: 01000000010000000100000001000000010000000100000001000000010000000100000001000000010000000100000001000000
+  m_Elements:
+  - m_Path: 
+    m_Weight: 1
+  - m_Path: Foot.L
+    m_Weight: 1
+  - m_Path: Foot.L/Knee Target.L
+    m_Weight: 1
+  - m_Path: Foot.L/Knee Target.L/Knee Target.L_end
+    m_Weight: 1
+  - m_Path: Foot.L/L Foot
+    m_Weight: 1
+  - m_Path: Foot.L/L Foot/L Foot Connector
+    m_Weight: 1
+  - m_Path: Foot.R
+    m_Weight: 1
+  - m_Path: Foot.R/Knee Target.R
+    m_Weight: 1
+  - m_Path: Foot.R/Knee Target.R/Knee Target.R_end
+    m_Weight: 1
+  - m_Path: Foot.R/R Foot
+    m_Weight: 1
+  - m_Path: Foot.R/R Foot/R Foot Connector
+    m_Weight: 1
+  - m_Path: Root
+    m_Weight: 1
+  - m_Path: Root/Head Bone
+    m_Weight: 0
+  - m_Path: Root/Head Bone/Gun
+    m_Weight: 0
+  - m_Path: Root/Head Bone/Gun/Gun_end
+    m_Weight: 1
+  - m_Path: Root/Head Bone/Gun/Mech Turret Body
+    m_Weight: 1
+  - m_Path: Root/Head Bone/Mech Body
+    m_Weight: 1
+  - m_Path: Root/Head Bone/Mech Body/Missile Emitter
+    m_Weight: 1
+  - m_Path: Root/Mech Hips
+    m_Weight: 1
+  - m_Path: Root/Mech Hips/Mech Leg Connector
+    m_Weight: 1
+  - m_Path: Root/Thigh.L
+    m_Weight: 1
+  - m_Path: Root/Thigh.L/Foreleg.L
+    m_Weight: 1
+  - m_Path: Root/Thigh.L/Foreleg.L/Foreleg.L_end
+    m_Weight: 1
+  - m_Path: Root/Thigh.L/Foreleg.L/L Foreleg
+    m_Weight: 1
+  - m_Path: Root/Thigh.L/L Thigh
+    m_Weight: 1
+  - m_Path: Root/Thigh.L/L Thigh/L Leg Emitter
+    m_Weight: 1
+  - m_Path: Root/Thigh.R
+    m_Weight: 1
+  - m_Path: Root/Thigh.R/Foreleg.R
+    m_Weight: 1
+  - m_Path: Root/Thigh.R/Foreleg.R/Foreleg.R_end
+    m_Weight: 1
+  - m_Path: Root/Thigh.R/Foreleg.R/R Foreleg
+    m_Weight: 1
+  - m_Path: Root/Thigh.R/R Thigh
+    m_Weight: 1
+  - m_Path: Root/Thigh.R/R Thigh/R Leg Emitter
+    m_Weight: 1

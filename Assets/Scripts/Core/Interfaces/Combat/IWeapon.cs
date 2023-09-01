@@ -4,7 +4,7 @@ namespace Endsley
 {
     public interface IWeapon
     {
-        public void FireWeapon();
+        public void FireWeapon(bool isPerfectShot);
         public void PrepWeapon();
         public void Reload();
 

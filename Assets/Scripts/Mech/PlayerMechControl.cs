@@ -33,6 +33,8 @@ namespace Endsley
             {
                 Debug.LogError("InputActions for movement, jump, or firing are not set up. Please assign them.");
             }
+
+            mechWeaponManager.SetTargetForAll(ReticleWorldPosition.Instance.GetGameObject());
         }
 
 
