@@ -46,11 +46,13 @@ namespace Endsley
         }
 
         // Allows animator to react to turning (including in-place)
-        void SetRotating(float dir)
+        void SetRotating(float delta)
         {
-            Debug.Log("SetRotating called");
+            delta = Mathf.Abs(delta) * Mathf.Rad2Deg;
+
             // For now, just play the step animation at a slower speed, but allow it to be overriden by faster movements (turning while walking)
-            if (dir == 0)
+            //convert to degrees
+            if (delta < 3)
             {
                 anim.SetBool("Rotating", false);
             }

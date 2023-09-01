@@ -6,11 +6,15 @@ namespace Endsley
     public class DebugUIController : MonoBehaviour
     {
         public Button button1;
+
+        public GameObject AIBeacon;
+        public GameObject testMech;
         public Button button2;
         public Button button3;
         public Button button4;
         public Button button5;
         public Button button6;
+
 
         void Start()
         {
@@ -24,26 +28,57 @@ namespace Endsley
 
         void Button1Clicked()
         {
-            Debug.Log("Button 1 clicked");
-            // Call your function here
+            Debug.Log("Button 1 clicked: AI Go To");
+            if (AIBeacon == null)
+            {
+                Debug.LogWarning("No AIBeacon set on DebugUIController");
+                return;
+            }
+            if (testMech.TryGetComponent(out MovementAI ai))
+            {
+                ai.GoTo(AIBeacon.transform);
+            }
+            else
+            {
+                Debug.LogWarning("No MovementAI found on testMech");
+            }
         }
 
         void Button2Clicked()
         {
             Debug.Log("Button 2 clicked");
-            // Call your function here
+            if (testMech.TryGetComponent(out MechController mech))
+            {
+                mech.RotateToHeading(90f);
+            }
+            else
+            {
+                Debug.LogWarning("No MechController found on testMech");
+            }
         }
 
         void Button3Clicked()
         {
-            Debug.Log("Button 3 clicked");
-            // Call your function here
+            if (testMech.TryGetComponent(out MechController mech))
+            {
+                mech.RotateToHeading(-90f);
+            }
+            else
+            {
+                Debug.LogWarning("No MechController found on testMech");
+            }
         }
 
         void Button4Clicked()
         {
-            Debug.Log("Button 4 clicked");
-            // Call your function here
+            if (testMech.TryGetComponent(out MechController mech))
+            {
+                mech.RotateToTarget(AIBeacon.transform.position);
+            }
+            else
+            {
+                Debug.LogWarning("No MechController found on testMech");
+            }
         }
 
         void Button5Clicked()

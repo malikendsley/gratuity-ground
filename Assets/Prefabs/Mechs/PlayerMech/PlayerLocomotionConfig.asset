@@ -12,10 +12,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 29fd243c359745848856f8a5c22755d4, type: 3}
   m_Name: PlayerLocomotionConfig
   m_EditorClassIdentifier: 
-  walkSpeed: 10
+  walkSpeed: 20
   runSpeed: 20
   acceleration: 2
   deceleration: 5
-  rotationSpeed: 50
+  rotationSpeed: 100
   jumpForce: 10
   runThreshold: 10

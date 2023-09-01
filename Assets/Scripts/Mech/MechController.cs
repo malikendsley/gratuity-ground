@@ -1,6 +1,5 @@
 using System;
 using UnityEngine;
-using UnityEngine.InputSystem;
 
 namespace Endsley
 {
@@ -18,6 +17,7 @@ namespace Endsley
         [SerializeField] private Transform groundCheck;
         [SerializeField] private float checkDistance;
         [SerializeField] private LayerMask checkMask;
+        [SerializeField] private bool usesHeading = false;
         #endregion
 
         #region Input Variables
@@ -31,6 +31,8 @@ namespace Endsley
         private const float Gravity = 9.81f;
         private float rotationDelta = 0f;
         private float lastRotationDelta = 0f;
+        private float desiredHeading;
+
 
         private bool wasGrounded;
         private bool isGrounded;
@@ -58,6 +60,8 @@ namespace Endsley
             // Controlled by UpdateControl()
             HandleRot();
             HandleMovement();
+            HandleRotationTowardsDesiredHeading();
+
         }
 
         private void HandleGrounding()
@@ -106,6 +110,23 @@ namespace Endsley
             characterController.Move(moveVector);
         }
 
+        private void HandleRotationTowardsDesiredHeading()
+        {
+            if (usesHeading)
+            {
+                float currentHeading = transform.eulerAngles.y;
+                float newHeading = Mathf.MoveTowardsAngle(currentHeading, desiredHeading, locomotionConfig.rotationSpeed * Time.deltaTime);
+                transform.eulerAngles = new Vector3(0, newHeading, 0);
+
+                float rotationDelta = newHeading - currentHeading;
+                if (rotationDelta != lastRotationDelta)
+                {
+                    OnRotationChange?.Invoke(rotationDelta);
+                    lastRotationDelta = rotationDelta;
+                }
+            }
+        }
+
         public void UpdateControl(Vector2 ctrlVector)
         {
             //Extract forward / backward desired motion
@@ -123,7 +144,21 @@ namespace Endsley
 
         public void RotateToHeading(float targetHeading)
         {
-            throw new NotImplementedException();
+            //convert to 360 degrees
+            targetHeading = (targetHeading + 360) % 360;
+            usesHeading = true;
+            desiredHeading = targetHeading;
+        }
+
+        public void RotateToTarget(Vector3 target)
+        {
+            Vector3 direction = target - transform.position;
+            direction.y = 0;  // Ensure the rotation is only around the Y-axis
+
+            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
+            float targetHeading = targetRotation.eulerAngles.y + 180;  // Add 180 degrees to face away
+
+            RotateToHeading(targetHeading);
         }
 
         public void Jump()
