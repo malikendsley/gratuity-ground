@@ -36,7 +36,7 @@ namespace Endsley
             }
             if (testMech.TryGetComponent(out MovementAI ai))
             {
-                ai.GoTo(AIBeacon.transform);
+                ai.MoveToTarget(AIBeacon.transform.position);
             }
             else
             {
