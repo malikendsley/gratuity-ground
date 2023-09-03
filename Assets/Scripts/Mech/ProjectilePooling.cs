@@ -1,14 +1,9 @@
-using System.Collections.Generic;
-using UnityEngine;
+
 namespace Endsley
 {
     using UnityEngine;
     using System.Collections.Generic;
-    public enum BulletAllegiance
-    {
-        Ally,
-        Enemy
-    }
+
     public class ProjectilePooling : MonoBehaviour
     {
         public static ProjectilePooling Instance;
@@ -37,7 +32,7 @@ namespace Endsley
             }
 
             Bullet bullet = availableBullets.Dequeue();
-            bullet.allegiance = allegiance; // You can define Allegiance in your Bullet script
+            bullet.allegiance = allegiance;
             bullet.gameObject.SetActive(true);
             return bullet;
         }

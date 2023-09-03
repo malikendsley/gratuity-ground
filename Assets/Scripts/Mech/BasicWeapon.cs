@@ -15,12 +15,16 @@ namespace Endsley
         [SerializeField] private float magazineSize;
         [SerializeField] private float reloadTime;
         [SerializeField] private BulletAllegiance bulletAllegiance;
+        //HACK: go back to pooling once it's fixed
+        [SerializeField] private GameObject bulletPrefab;
         #endregion
 
         #region Private Variables
+        private bool shouldFire;
+        private bool aimAssistOn;
         private float fireDelay;
-        private float nextShotTime;
-        private float nextReloadTime;
+        private float nextShotTime = 0;
+        private float nextReloadTime = 0;
         [SerializeField] float currentAmmo;
         private bool isReloading = false;
         #endregion
@@ -52,47 +56,68 @@ namespace Endsley
         private void Update()
         {
             LookAt(trackedTarget ? trackedTarget : defaultForward.gameObject);
-        }
-        #region Weapon Actions
-        public void FireWeapon(bool isPerfectShot)
-        {
-            bool success = false;
-            if (Time.time > nextShotTime && !isReloading)
+
+            //If we should fire, try to fire every time the time is greater than the next shot time
+            if (shouldFire)
             {
-                if (currentAmmo > 0)
+                // If we are not reloading and the weapon is ready, fire
+                if (Time.time > nextShotTime && !isReloading)
                 {
-                    // Check if close enough to aim-assist
-                    Transform aimTarget = isPerfectShot ? trackedTarget.transform : null;
+                    if (currentAmmo > 0)
+                    {
+                        Transform aimTarget = aimAssistOn ? trackedTarget.transform : null;
 
-                    // Get bullet from pool and fire
-                    Bullet bullet = ProjectilePooling.Instance.GetBullet(bulletAllegiance);
-                    bullet.Initialize(firePoint.position, ReticleWorldPosition.Instance.GetPosition() - firePoint.position, bulletAllegiance, aimTarget);
+                        // Get bullet from pool and fire
+                        Bullet bullet = Instantiate(bulletPrefab, firePoint.position, transform.rotation).GetComponent<Bullet>();
+                        if (!bullet)
+                        {
+                            Debug.LogWarning("No bullet available in pool. Consider increasing pool size.");
+                            return;
+                        }
+                        if (trackedTarget)
+                        {
+                            bullet.InitNoAimAssist(firePoint.position, trackedTarget.transform.position - firePoint.position, bulletAllegiance);
+                        }
+                        else
+                        {
+                            bullet.InitAimAssist(firePoint.position, fireThrough.position - firePoint.position, bulletAllegiance, aimTarget);
+                        }
 
-                    // Usual code
-                    Debug.Log("Firing Weapon");
-                    nextShotTime = Time.time + fireDelay;
-                    currentAmmo--;
-                    OnAmmoChange?.Invoke((int)currentAmmo);
-                    success = true;
+                        // Usual code
+                        Debug.Log("Firing Weapon");
+                        nextShotTime = Time.time + fireDelay;
+                        currentAmmo--;
+                        OnAmmoChange?.Invoke((int)currentAmmo);
+                        OnWeaponFire?.Invoke(true);
+                    }
+                    else
+                    {
+                        Debug.Log("No Ammo");
+                    }
                 }
                 else
                 {
-                    Debug.Log("No Ammo");
+                    Debug.Log("Can't fire; Still reloading or waiting for next shot");
                 }
             }
-            else
-            {
-                Debug.Log("Can't fire; Still reloading or waiting for next shot");
-            }
-
-            OnWeaponFire?.Invoke(success);
         }
 
-        public void PrepWeapon()
+
+
+        #region Weapon Actions
+        public void StartWeapon(bool isPerfectShot)
         {
             OnWeaponPrep?.Invoke();
-            Debug.LogWarning("No prep behavior");
+            shouldFire = true;
+            aimAssistOn = isPerfectShot;
         }
+
+        public void StopWeapon()
+        {
+            shouldFire = false;
+            aimAssistOn = false;
+        }
+
 
         public void Reload()
         {

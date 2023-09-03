@@ -4,8 +4,8 @@ namespace Endsley
 {
     public interface IWeapon
     {
-        public void FireWeapon(bool isPerfectShot);
-        public void PrepWeapon();
+        public void StartWeapon(bool isPerfectShot);
+        public void StopWeapon();
         public void Reload();
 
         public void SetTarget(GameObject target);

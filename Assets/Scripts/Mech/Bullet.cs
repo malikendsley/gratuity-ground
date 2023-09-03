@@ -5,63 +5,87 @@ namespace Endsley
 {
     public class Bullet : MonoBehaviour
     {
-        public float speed = 50f;  // Adjust based on your needs
+        public float speed = 50f;
+        public int damage = 1;
         public BulletAllegiance allegiance;
-        public float timeBeforePhysics = 1f;  // Time in seconds before physics take over
+        public LayerMask interactableLayers;  // Layers that this bullet can interact with
+        [Tooltip("Seconds before returning to the pool")]
+        public float lifetime = 5f;
 
-        public event Action OnReturnToPool;
-        public Transform target;  // Set this if aim-assisted
+        private Transform target;  // Set this if aim-assisted
 
-        private Vector3 direction;
-        private bool isAimAssisted;
-        private Rigidbody rb;
-        private float timeElapsed = 0f;
+        [SerializeField] private Rigidbody rb;
+        private float timeToLive;  // Timer to track bullet's lifetime
+        private bool isAimAssisted = false;
         void Start()
         {
-            rb = GetComponent<Rigidbody>();
-            rb.isKinematic = true;  // Initialize with kinematic on
+            if (!TryGetComponent(out rb))
+            {
+                Debug.LogError("No rigidbody attached to bullet");
+            }
+            rb.isKinematic = false;
+            timeToLive = 0f;  // Initialize the lifetime timer
         }
 
-        public void Initialize(Vector3 position, Vector3 direction, BulletAllegiance allegiance, Transform target = null)
+        public void InitNoAimAssist(Vector3 position, Vector3 direction, BulletAllegiance allegiance)
         {
             this.allegiance = allegiance;
             transform.position = position;
-            this.direction = direction.normalized;
+            isAimAssisted = false;
+            timeToLive = 0f;  // Reset the lifetime timer
+            rb.isKinematic = false;
+            rb.AddForce(direction.normalized * speed, ForceMode.Impulse);
+        }
+
+        public void InitAimAssist(Vector3 position, Vector3 direction, BulletAllegiance allegiance, Transform target)
+        {
+            this.allegiance = allegiance;
+            transform.position = position;
+            isAimAssisted = true;
             this.target = target;
-            isAimAssisted = target != null;
-            timeElapsed = 0f;
+            rb.isKinematic = true;
         }
 
         void Update()
         {
-            timeElapsed += Time.deltaTime;
-
-            if (timeElapsed < timeBeforePhysics)
+            timeToLive += Time.deltaTime;
+            // If aim assist is true, track the target
+            if (isAimAssisted)
             {
-                if (isAimAssisted)
-                {
-                    // Aim-assisted movement
-                    direction = (target.position - transform.position).normalized;
-                }
-                // General movement, aim-assisted or not
-                transform.position += speed * Time.deltaTime * direction;
+                //NOTE: Will need a different solution if bullets aren't spherical
+                transform.LookAt(target);
+                Debug.DrawLine(transform.position, target.position, Color.red);
+                transform.Translate(speed * Time.deltaTime * Vector3.forward);
             }
-            else
+            // Check if the bullet should be returned to the pool
+            if (timeToLive >= lifetime)
             {
-                if (rb.isKinematic)
-                {
-                    // Switch to physics-based movement for the first time
-                    rb.isKinematic = false;
-                    rb.velocity = speed * direction;
-                }
-                // Now physics will naturally take over
+                ProjectilePooling.Instance.ReturnBullet(this);
             }
         }
 
-        public void ReturnToPool()
+        void OnTriggerEnter(Collider other)
         {
-            OnReturnToPool?.Invoke();
-            // Return to pool logic
+            // Check if the other object is on an interactable layer
+            if (((1 << other.gameObject.layer) & interactableLayers) != 0)
+            {
+                // try to retrieve the HitDetectionManager from the other object
+                if (other.TryGetComponent(out HitDetectionManager hitDetectionManager))
+                {
+                    if (hitDetectionManager.GetBulletAllegiance() == allegiance)
+                    {
+                        Debug.Log("Prevented friendly fire");
+                        // If the other object is on the same team, don't hit it
+                        return;
+                    }
+                    // TODO: use allegiance to make only enemies hit the player and vice versa
+                    // if the other object has a HitDetectionManager, tell it that it was hit
+                    hitDetectionManager.TakeDamage(damage);
+                    Debug.Log("Bullet hit " + other.gameObject.name);
+
+                }
+                ProjectilePooling.Instance.ReturnBullet(this);
+            }
         }
     }
 }

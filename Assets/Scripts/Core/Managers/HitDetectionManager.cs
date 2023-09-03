@@ -3,6 +3,12 @@ using UnityEngine;
 
 namespace Endsley
 {
+    public enum BulletAllegiance
+    {
+        Ally,
+        Enemy,
+        Unset,
+    }
     public class HitDetectionManager : MonoBehaviour, IDamageable
     {
 
@@ -13,6 +19,9 @@ namespace Endsley
 
         public event Action<int, HitDetectionManager> OnDamageTakenWithSource;
         public event Action<int> OnDamageTaken;
+        [Tooltip("This is the allegiance of the object that owns this HDM. If this is null, the allegiance will be determined by the parent HDM. If there is no parent HDM, the allegiance will be determined by the HealthManager.")]
+        [SerializeField]
+        private BulletAllegiance allegiance = BulletAllegiance.Unset;
 
         private void Start()
         {
@@ -25,6 +34,37 @@ namespace Endsley
                 else
                 {
                     Debug.LogError("No health manager found! Are you creating an orphan HDM or a health manager?");
+                }
+            }
+            Transform currentTransform = transform;
+            while (allegiance == BulletAllegiance.Unset)
+            {
+                // Look for parent HDM or HealthManager
+                HitDetectionManager parentHDM = currentTransform.GetComponent<HitDetectionManager>();
+                HealthManager healthManager = currentTransform.GetComponent<HealthManager>();
+
+                if (parentHDM && parentHDM.allegiance != BulletAllegiance.Unset)
+                {
+                    allegiance = parentHDM.allegiance;
+                    break;
+                }
+                else if (healthManager)
+                {
+                    allegiance = healthManager.GetBulletAllegiance();
+                    if (allegiance != BulletAllegiance.Unset)
+                        break;
+                }
+
+                // Move up to the parent transform for the next iteration
+                if (currentTransform.parent != null)
+                {
+                    currentTransform = currentTransform.parent;
+                }
+                else
+                {
+                    // We've reached the top and found nothing
+                    Debug.LogWarning("No allegiance set and no parent HDM or health manager found with set allegiance!");
+                    break;
                 }
             }
         }
@@ -42,6 +82,18 @@ namespace Endsley
             {
                 //Handle damage, talk to the HealthManager
                 healthManager.TakeDamage(damage);
+            }
+        }
+
+        public BulletAllegiance GetBulletAllegiance()
+        {
+            if (parentHDM)
+            {
+                return parentHDM.GetBulletAllegiance();
+            }
+            else
+            {
+                return allegiance;
             }
         }
     }

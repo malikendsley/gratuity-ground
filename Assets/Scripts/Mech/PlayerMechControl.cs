@@ -88,13 +88,13 @@ namespace Endsley
         void HandleFire1Down(InputAction.CallbackContext context)
         {
             Debug.Log("Fire 1 pressed");
-            mechWeaponManager.FireWeapon(1);
+            mechWeaponManager.StartWeapon(1);
         }
 
         void HandleFire2Down(InputAction.CallbackContext context)
         {
             Debug.Log("Fire 2 pressed");
-            mechWeaponManager.FireWeapon(2);
+            mechWeaponManager.StartWeapon(2);
         }
 
         void HandleFire1Up(InputAction.CallbackContext context)

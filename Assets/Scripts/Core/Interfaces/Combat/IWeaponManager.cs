@@ -14,13 +14,11 @@ namespace Endsley
         Dictionary<int, IWeapon> GetAvailableWeapons();
 
         // Fire individual weapons
-        void FireWeapon(int slot, bool shouldAimAssist = false);
-        void PrepWeapon(int slot);
+        void StartWeapon(int slot, bool shouldAimAssist = false);
         void StopWeapon(int slot);
 
         // Aggregate commands
-        void FireAllWeapons();
-        void PrepAllWeapons();
+        void StartAllWeapons(bool shouldAimAssist = false);
         void StopAllWeapons();
 
         // Target management

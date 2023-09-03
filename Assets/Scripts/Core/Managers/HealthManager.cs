@@ -6,6 +6,7 @@
 using System;
 using UnityEngine;
 using System.Runtime.CompilerServices;
+
 [assembly: InternalsVisibleTo("EditHealthTests")]
 
 namespace Endsley
@@ -18,6 +19,7 @@ namespace Endsley
         [SerializeField][ReadOnly] int currentHealth;
         [SerializeField][ReadOnly] int currentShields;
         private bool isDead = false;
+        public BulletAllegiance bulletAllegiance = BulletAllegiance.Unset;
         // For all instances of damage
         public event Action<int> OnDamageTaken;
         //For health and shields specific damage (UI)
@@ -32,6 +34,10 @@ namespace Endsley
             if (!TryGetComponent(out deathBehavior))
             {
                 Debug.LogWarning("No death behavior attached.");
+            }
+            if (bulletAllegiance == BulletAllegiance.Unset)
+            {
+                Debug.LogWarning("No allegiance set. This object will not be able to take damage.");
             }
         }
 
@@ -97,6 +103,11 @@ namespace Endsley
             bool val = isDead;
             isDead = true;
             return val;
+        }
+
+        public BulletAllegiance GetBulletAllegiance()
+        {
+            return bulletAllegiance;
         }
 
     }

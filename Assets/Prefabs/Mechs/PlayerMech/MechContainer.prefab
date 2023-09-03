@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 3474727327828924196}
   - component: {fileID: 1510275716726785080}
   - component: {fileID: 554134048398835058}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Thigh.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -108,7 +108,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4117449791648668411}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141,7 +141,7 @@ GameObject:
   - component: {fileID: 8164386665223695882}
   - component: {fileID: 7091114571358948233}
   - component: {fileID: 4859424575963052797}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Forward Dir
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -223,7 +223,7 @@ GameObject:
   m_Component:
   - component: {fileID: 1492638638450078704}
   - component: {fileID: 6607108313345331629}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Mech
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -280,7 +280,7 @@ GameObject:
   - component: {fileID: 3370238516599322540}
   - component: {fileID: 322225699495871848}
   - component: {fileID: 487750934399402240}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: L Foot Connector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -365,7 +365,7 @@ GameObject:
   - component: {fileID: 6146827307532700751}
   - component: {fileID: 8824988332795533879}
   - component: {fileID: 8727839277941449420}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Missile Emitter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -482,7 +482,7 @@ GameObject:
   - component: {fileID: 6521873605265558672}
   - component: {fileID: 1506343125883106890}
   - component: {fileID: 6385220838777054730}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: R Thigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -574,7 +574,7 @@ GameObject:
   - component: {fileID: 2077186962314414345}
   - component: {fileID: 529094493933014871}
   - component: {fileID: 8848547819671313476}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: MechContainer
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -597,6 +597,7 @@ Transform:
   - {fileID: 1492638638450078704}
   - {fileID: 4796378223680356602}
   - {fileID: 4117449791648668411}
+  - {fileID: 6356081698644970268}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &4315798797823018907
@@ -614,10 +615,11 @@ MonoBehaviour:
   locomotionConfig: {fileID: 11400000, guid: 710c5a0d9bd693c42863d7627385037d, type: 2}
   characterController: {fileID: 2585163105307159107}
   groundCheck: {fileID: 4117449791648668411}
-  checkDistance: 0.2
+  checkDistance: 1.02
   checkMask:
     serializedVersion: 2
     m_Bits: 64
+  usesHeading: 0
 --- !u!143 &2585163105307159107
 CharacterController:
   m_ObjectHideFlags: 0
@@ -628,10 +630,10 @@ CharacterController:
   m_Material: {fileID: 0}
   m_IncludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 4294967295
   m_ExcludeLayers:
     serializedVersion: 2
-    m_Bits: 0
+    m_Bits: 8
   m_LayerOverridePriority: 0
   m_IsTrigger: 0
   m_ProvidesContacts: 0
@@ -639,9 +641,9 @@ CharacterController:
   serializedVersion: 3
   m_Height: 10.04
   m_Radius: 3.3
-  m_SlopeLimit: 45
+  m_SlopeLimit: 90
   m_StepOffset: 0.3
-  m_SkinWidth: 0.08
+  m_SkinWidth: 0.03
   m_MinMoveDistance: 0
   m_Center: {x: 0, y: 5, z: 0}
 --- !u!114 &6872251124879001555
@@ -832,7 +834,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2059797980567928028}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -868,7 +870,7 @@ GameObject:
   - component: {fileID: 921504023443393893}
   - component: {fileID: 3553447827447286067}
   - component: {fileID: 628902959945478938}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Foot.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -961,7 +963,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2774243273706501782}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Firepoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -994,7 +996,7 @@ GameObject:
   - component: {fileID: 7327967548758300929}
   - component: {fileID: 9191833735695232226}
   - component: {fileID: 9118489048560366523}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: L Thigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1081,7 +1083,7 @@ GameObject:
   - component: {fileID: 5106655629495453295}
   - component: {fileID: 7008751319800233522}
   - component: {fileID: 5383079652995419499}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Camera Target
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1097,7 +1099,7 @@ Transform:
   m_GameObject: {fileID: 5364158354630859714}
   serializedVersion: 2
   m_LocalRotation: {x: 0, y: 1, z: 0, w: 0}
-  m_LocalPosition: {x: 0, y: 8.63, z: -6.4}
+  m_LocalPosition: {x: 0, y: 11.3, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
@@ -1176,7 +1178,7 @@ GameObject:
   - component: {fileID: 840186488038221399}
   - component: {fileID: 6898443790691100710}
   - component: {fileID: 3731768145092875307}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: L Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1261,7 +1263,7 @@ GameObject:
   - component: {fileID: 262341118530607210}
   - component: {fileID: 2662496402239877678}
   - component: {fileID: 4932178479184841462}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Foreleg.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1356,7 +1358,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 172051567738303588}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1393,7 +1395,7 @@ GameObject:
   - component: {fileID: 3619390540336544102}
   - component: {fileID: 8873736999024227166}
   - component: {fileID: 9083072673878141143}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Mech Leg Connector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1476,7 +1478,7 @@ GameObject:
   - component: {fileID: 8920120132834533910}
   - component: {fileID: 24733362170473980}
   - component: {fileID: 913708534689259395}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: L Leg Emitter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1562,7 +1564,7 @@ GameObject:
   - component: {fileID: 1647433694713826605}
   - component: {fileID: 4719924457392617057}
   - component: {fileID: 454865800519419130}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Mech Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1710,7 +1712,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6903033629416666026}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Firepoint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1732,6 +1734,59 @@ Transform:
   m_Children: []
   m_Father: {fileID: 7338905742040925664}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &6129048446827271390
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 6356081698644970268}
+  - component: {fileID: 2323079059127383717}
+  m_Layer: 3
+  m_Name: Targeting CoM
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &6356081698644970268
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6129048446827271390}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 5, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 2620995214399316074}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!135 &2323079059127383717
+SphereCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6129048446827271390}
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_LayerOverridePriority: 0
+  m_IsTrigger: 0
+  m_ProvidesContacts: 0
+  m_Enabled: 1
+  serializedVersion: 3
+  m_Radius: 0.5
+  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6158073469872448425
 GameObject:
   m_ObjectHideFlags: 0
@@ -1743,7 +1798,7 @@ GameObject:
   - component: {fileID: 4916874323424780955}
   - component: {fileID: 508614711495033153}
   - component: {fileID: 275783583317868718}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: L Foreleg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1828,7 +1883,7 @@ GameObject:
   - component: {fileID: 1745053952157613829}
   - component: {fileID: 7747649465377767395}
   - component: {fileID: 6889973338810256866}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Thigh.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1924,7 +1979,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 7236246791579233507}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Head Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1959,7 +2014,7 @@ GameObject:
   - component: {fileID: 4448327201764590869}
   - component: {fileID: 2595692414120221907}
   - component: {fileID: 6990973541349414461}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: R Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2044,7 +2099,7 @@ GameObject:
   - component: {fileID: 5907447452172496753}
   - component: {fileID: 2102787625922591513}
   - component: {fileID: 7764105196446086623}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Foot.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2142,7 +2197,7 @@ GameObject:
   - component: {fileID: 5120728492175054220}
   - component: {fileID: 1339402525251435096}
   - component: {fileID: 7147356455082906471}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Mech Turret Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2290,7 +2345,7 @@ GameObject:
   - component: {fileID: 3223777087309975941}
   - component: {fileID: 4330214765245557191}
   - component: {fileID: 3937645542801033002}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: R Leg Emitter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2373,7 +2428,7 @@ GameObject:
   - component: {fileID: 6141428293270696026}
   - component: {fileID: 4524256325017056825}
   - component: {fileID: 3831760251704541050}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: R Foot Connector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2457,7 +2512,7 @@ GameObject:
   - component: {fileID: 5099383188406408086}
   - component: {fileID: 3671604658965160621}
   - component: {fileID: 3552129411225486636}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Foreleg.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2554,7 +2609,7 @@ GameObject:
   - component: {fileID: 2675368206958515640}
   - component: {fileID: 6317854374435716661}
   - component: {fileID: 2407664542270304421}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: R Foreleg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2637,7 +2692,7 @@ GameObject:
   m_Component:
   - component: {fileID: 7338905742040925664}
   - component: {fileID: 3441237003272388801}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Gun Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2697,7 +2752,7 @@ GameObject:
   - component: {fileID: 4246200776101243502}
   - component: {fileID: 3459854179361759396}
   - component: {fileID: 8876097606470077271}
-  m_Layer: 3
+  m_Layer: 0
   m_Name: Mech Hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
