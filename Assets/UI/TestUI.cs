@@ -28,7 +28,6 @@ namespace Endsley
 
         void Button1Clicked()
         {
-            Debug.Log("Button 1 clicked: AI Go To");
             if (AIBeacon == null)
             {
                 Debug.LogWarning("No AIBeacon set on DebugUIController");
@@ -46,7 +45,6 @@ namespace Endsley
 
         void Button2Clicked()
         {
-            Debug.Log("Button 2 clicked");
             if (testMech.TryGetComponent(out MechController mech))
             {
                 mech.RotateToHeading(90f);
@@ -83,8 +81,10 @@ namespace Endsley
 
         void Button5Clicked()
         {
+            // Spawn a new squad of enemies (the debug location is set in the SquadManager)
+            // NOTE: If this suddenly starts behaving weirdly, it's probably because the debug location was removed
             Debug.Log("Button 5 clicked");
-            // Call your function here
+            SquadManager.Instance.SpawnNewSquad();
         }
 
         void Button6Clicked()
