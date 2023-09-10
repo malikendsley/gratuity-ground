@@ -1,3 +1,4 @@
+using TMPro;
 using UnityEngine;
 using UnityEngine.UI;
 
@@ -24,6 +25,8 @@ namespace Endsley
             button4.onClick.AddListener(Button4Clicked);
             button5.onClick.AddListener(Button5Clicked);
             button6.onClick.AddListener(Button6Clicked);
+            button6.GetComponentInChildren<TextMeshProUGUI>().text = "Squads Can Spawn: " + (SquadManager.Instance.spawningAllowed ? "Yes" : "No");
+
         }
 
         void Button1Clicked()
@@ -90,7 +93,10 @@ namespace Endsley
         void Button6Clicked()
         {
             Debug.Log("Button 6 clicked");
-            // Call your function here
+            SquadManager.Instance.spawningAllowed = !SquadManager.Instance.spawningAllowed;
+            Debug.Log("SquadManager.Instance.spawningAllowed = " + SquadManager.Instance.spawningAllowed);
+            // Edit the text of the button to show current state
+            button6.GetComponentInChildren<TextMeshProUGUI>().text = "Spawning Squads: " + (SquadManager.Instance.spawningAllowed ? "Yes" : "No");
         }
     }
 }

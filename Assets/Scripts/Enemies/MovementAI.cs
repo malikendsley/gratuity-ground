@@ -56,11 +56,11 @@ namespace Endsley
             if (active && corners.Count > 0)
             {
                 // // Draw the path
-                // for (int i = 0; i < corners.Count - 1; i++)
-                // {
-                //     Debug.DrawLine(corners[i], corners[i + 1], Color.red);
-                // }
-                // Debug.DrawRay(corners[currentCorner], Vector3.up * 0.5f, Color.blue);
+                for (int i = 0; i < corners.Count - 1; i++)
+                {
+                    Debug.DrawLine(corners[i], corners[i + 1], Color.red);
+                }
+                Debug.DrawRay(corners[currentCorner], Vector3.up * 0.5f, Color.blue);
 
                 Vector3 nextPoint = corners[currentCorner];
                 Vector3 directionToNextPoint = nextPoint - transform.position;
@@ -102,6 +102,7 @@ namespace Endsley
         // Returns true if a path was found, false otherwise
         public bool MoveToTarget(Vector3 transform)
         {
+            Debug.Log("MovementAI: destination set by Squad.");
             target = transform;
 
             if (NavMesh.SamplePosition(target, out NavMeshHit hit, navMeshSampleDistance, NavMesh.AllAreas))

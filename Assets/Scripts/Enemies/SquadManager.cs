@@ -1,7 +1,10 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
+// This entire class may not be necessary, but I don't know where else to put the squad spawning logic besides a game manager
+// Super object that manages all aspects of the game
 namespace Endsley
 {
     public class SquadManager : MonoBehaviour
@@ -11,18 +14,23 @@ namespace Endsley
         // The highest level manager for all enemies in the game. Note that all 
         // aspects of spawning and managing enemies should be handled by this class
         // or a class it manages, because there is nowhere else that will.
-        public List<Squad> squads = new();
-
-        public GameObject debugSpawnLocation;
+        readonly List<Squad> squads = new();
+        public GameObject enemiesFolder;
+        public int maxSquadCount = 5;
+        public GameObject enemyPrefab;
         public int defaultSquadSize = 5;
-        //NOTE: maybe make defaultSquadSpread a function of size? 
         public float defaultSquadSpread = 10f;
-        // TODO: scriptable object that determines spawn characteristics
-        // TODO: in the update loop, continuously:
-        // - Spawn new squads on a cooldown tied to difficulty
-        // - Update the targeting of all squads
-        // - Update the movement of all squads
-        // - etc.
+        public float playerMinDistance = 50f;
+        public float cooldownTime = 10f;
+        private float timer;
+        public bool canSpawn = false;
+        public bool spawningAllowed = false;
+        public LayerMask LOSMask;
+
+        [Tooltip("How often to update the waypoints of all squads in updates / second.")]
+        [SerializeField] private float squadWaypointUpdateFrequency = .1f;
+        private float squadWaypointUpdateTimer = 0f;
+        private float nextSquadWaypointUpdateTime = 0f;
 
         private void Awake()
         {
@@ -38,44 +46,121 @@ namespace Endsley
 
         private void OnDrawGizmos()
         {
-            // Draw a circle that represents the spawn area
-            Gizmos.color = Color.red;
-            Gizmos.DrawWireSphere(debugSpawnLocation.transform.position, defaultSquadSpread);
-            // Draw a sphere at the spawn location
-            Gizmos.color = Color.green;
-            Gizmos.DrawSphere(debugSpawnLocation.transform.position, 2.5f);
+            if (Application.isPlaying)
+            {
+                Gizmos.color = Color.red;
+                Gizmos.DrawWireSphere(PlayerMechControl.Instance.PlayerTransform.position, playerMinDistance);
+            }
+        }
+        private void Start()
+        {
+            Debug.Log("NOTE: Canspawn is set to false in SquadManager.Start(). Set this to true later.");
+            timer = cooldownTime;
+            StartCoroutine(SpawnSquadCooldown());
         }
 
         private void Update()
         {
-            // Existing update logic here
+
+            squadWaypointUpdateTimer += Time.deltaTime;
+            if (squadWaypointUpdateTimer >= nextSquadWaypointUpdateTime)
+            {
+                foreach (var squad in squads)
+                {
+                    // HACK: Properly parameterize this
+                    Vector3 newWaypoint = PlayerMechControl.Instance.GetNearbyPoint(playerMinDistance, playerMinDistance * 2f);
+                    squad.SetWaypoint(newWaypoint);
+                }
+
+                nextSquadWaypointUpdateTime = 1f / squadWaypointUpdateFrequency;
+                squadWaypointUpdateTimer = 0f;
+            }
         }
 
-        // Spawn a new squad at the given location
+        // Spawn a new squad on the map
         public void SpawnNewSquad()
         {
-            // TODO: make the player controller a singleton to make it easier to access
-            // Decide the spawn location. The criteria:
-            // - The location should be within the bounds of the map
-            // - The location should be far enough away from the player
-            // - The location should be far enough away from other squads
-            // - The location should not have line of sight to the player
-            // Instantiate a new squad object and initialize it with the given location
-            // The squad will take over spawning its own enemies, and return a squad object when it is ready
-
-            // For now, use the public debug spawn location and spawn characteristics
-            squads.Add(new(debugSpawnLocation.transform.position, defaultSquadSpread, defaultSquadSize, true));
+            if (squads.Count >= maxSquadCount)
+            {
+                Debug.Log("Max squad count reached, cannot spawn squad.");
+                return;
+            }
+            Vector3 potentialLocation = NavMeshUtils.GetRandomNavMeshPoint();
+            DebugUtils.DrawTempDebugSphere(potentialLocation, 5f, 2f, Color.cyan);
+            if (!GoodLocationToSpawn(potentialLocation, Camera.main))
+            {
+                return;
+            }
+            else
+            {
+                Debug.Log("No line of sight to player, spawning squad.");
+                // TODO: turn off debug draw
+                Squad newSquad = new(enemyPrefab, potentialLocation, defaultSquadSpread, defaultSquadSize, enemiesFolder.transform, true);
+                squads.Add(newSquad);
+            }
         }
 
+        // HACK: Clean this mess up
+        private bool GoodLocationToSpawn(Vector3 point, Camera camera)
+        {
+            // Check if point is within the camera's view
+            Vector3 viewportPoint = camera.WorldToViewportPoint(point);
+            bool isInView = viewportPoint.z > 0 && viewportPoint.x >= 0 && viewportPoint.x <= 1 && viewportPoint.y >= 0 && viewportPoint.y <= 1;
+
+            // If it's in view, return false
+            if (isInView)
+            {
+                Debug.Log("Point is in view, returning false");
+                return false;
+            }
+            else
+            {
+                // If the distance is greater than playminDistance, return true
+                if (Vector3.Distance(point, PlayerMechControl.Instance.PlayerTransform.position) > playerMinDistance)
+                {
+                    Debug.Log("Point is out of view and out of range, returning true");
+                    return true;
+                }
+            }
+
+            // Perform raycasting to check if there's any obstruction
+            bool hasLineOfSight = !Physics.Raycast(camera.transform.position, point - camera.transform.position, Vector3.Distance(camera.transform.position, point), LOSMask);
+
+            // If it's out of view and not obstructed, return true
+            Debug.Log("Point is in view: " + isInView + ", has line of sight: " + hasLineOfSight + ", returning " + !hasLineOfSight + ".");
+            return hasLineOfSight;
+        }
+        // TODO: de-enumify this
         private IEnumerator SpawnSquadCooldown()
         {
-            // Spawn a new squad (details tbd)
-            // Yield for an amount of time based on time passed and number of squads
-            // Provisionally, increase the squad cap by 1 every minute
-            // The squad spawning rate is a function of max number of enemies (and by extension squads) and current live enemies
-            // Spawn faster when there are fewer enemies and vice versa
             // TODO: make a difficulty scaling config
-            yield return null;
+
+            while (true)
+            {
+                if (spawningAllowed)
+                {
+                    if (canSpawn)
+                    {
+                        Debug.Log("SquadManager: Spawning new squad");
+                        SpawnNewSquad();
+
+                        canSpawn = false;
+                        timer = cooldownTime;
+                    }
+                    else
+                    {
+                        timer = Math.Max(timer - 1f, 0f);
+                        Debug.Log("Remaining cooldown: " + timer + "s");
+
+                        if (timer <= 0)
+                        {
+                            canSpawn = true;
+                        }
+                    }
+                }
+
+                yield return new WaitForSeconds(1f);
+            }
         }
     }
 }

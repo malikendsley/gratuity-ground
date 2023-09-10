@@ -11,7 +11,7 @@ GameObject:
   - component: {fileID: 5079296098524900769}
   - component: {fileID: 8100331681948866554}
   - component: {fileID: 9075306740601240287}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: R Thigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -95,7 +95,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4507588365888541042}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Firepoint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -129,7 +129,7 @@ GameObject:
   - component: {fileID: 5884130573122739725}
   - component: {fileID: 665158584243497134}
   - component: {fileID: 6454226297186645718}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Foreleg.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -227,7 +227,7 @@ GameObject:
   - component: {fileID: 842700037826857169}
   - component: {fileID: 7736292412243997462}
   - component: {fileID: 5987323476892041737}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mech Leg Connector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -308,7 +308,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 5448018451544245144}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: GroundCheck
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -339,7 +339,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8200374281631784375}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Root
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -379,7 +379,7 @@ GameObject:
   - component: {fileID: 3227186226286790209}
   - component: {fileID: 3264648671562185744}
   - component: {fileID: 7413971446769638572}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mech Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -530,7 +530,7 @@ GameObject:
   - component: {fileID: 4295190094325220852}
   - component: {fileID: 5156979908899723060}
   - component: {fileID: 1770727102987002792}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: L Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -616,7 +616,7 @@ GameObject:
   - component: {fileID: 2853343977029952426}
   - component: {fileID: 7424504354902392703}
   - component: {fileID: 3194066855784087410}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Missile Emitter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -735,7 +735,7 @@ GameObject:
   - component: {fileID: 3915691541713534931}
   - component: {fileID: 3950260989456787588}
   - component: {fileID: 5357495761313542205}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Foreleg.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -834,7 +834,7 @@ GameObject:
   - component: {fileID: 7229203273079016047}
   - component: {fileID: 4480526352680873466}
   - component: {fileID: 7254225266235323833}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Foot.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -933,7 +933,7 @@ GameObject:
   - component: {fileID: 234115975386398971}
   - component: {fileID: 3010837715010452666}
   - component: {fileID: 7040091734425668532}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mech Turret Body
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1083,7 +1083,7 @@ GameObject:
   - component: {fileID: 3078062091836320992}
   - component: {fileID: 694998965261157978}
   - component: {fileID: 8847493187357599608}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Thigh.R
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1171,37 +1171,6 @@ Rigidbody:
   m_Interpolate: 0
   m_Constraints: 0
   m_CollisionDetection: 0
---- !u!1 &3404094573699630054
-GameObject:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  serializedVersion: 6
-  m_Component:
-  - component: {fileID: 3494797318525787387}
-  m_Layer: 7
-  m_Name: 'Targeting CoM '
-  m_TagString: Untagged
-  m_Icon: {fileID: 0}
-  m_NavMeshLayer: 0
-  m_StaticEditorFlags: 0
-  m_IsActive: 1
---- !u!4 &3494797318525787387
-Transform:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 3404094573699630054}
-  serializedVersion: 2
-  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 5, z: 0}
-  m_LocalScale: {x: 1, y: 1, z: 1}
-  m_ConstrainProportionsScale: 0
-  m_Children: []
-  m_Father: {fileID: 8590976686628104301}
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &3731299267966885279
 GameObject:
   m_ObjectHideFlags: 0
@@ -1213,7 +1182,7 @@ GameObject:
   - component: {fileID: 6206897852058490198}
   - component: {fileID: 1101562706805196449}
   - component: {fileID: 4664459787438571090}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: L Thigh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1300,7 +1269,7 @@ GameObject:
   - component: {fileID: 2235202617822176597}
   - component: {fileID: 3310120516548424386}
   - component: {fileID: 5182577374702701004}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Foot.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1396,7 +1365,7 @@ GameObject:
   - component: {fileID: 1379160410523270920}
   - component: {fileID: 6199230881256536050}
   - component: {fileID: 3484440492124957718}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Forward Dir
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1479,7 +1448,7 @@ GameObject:
   - component: {fileID: 3184068518790581808}
   - component: {fileID: 6637427078536904041}
   - component: {fileID: 5365827052048719350}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: R Foot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1562,7 +1531,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6530041107634187749}
   - component: {fileID: 7904642139144540600}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mech
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1618,7 +1587,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6495795077802229066}
   - component: {fileID: 6543082697123390920}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Gun Pivot
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1659,11 +1628,12 @@ MonoBehaviour:
   defaultForward: {fileID: 1379160410523270920}
   firePoint: {fileID: 4507588365888541042}
   fireThrough: {fileID: 8351945550338666228}
-  fireRate: 10
+  fireRate: 3
   magazineSize: 1000
   reloadTime: 0.5
-  bulletAllegiance: 0
-  bulletPrefab: {fileID: 0}
+  bulletAllegiance: 1
+  bulletPrefab: {fileID: 3983898183347926418, guid: 1d0e6e2294718e446980bdee7a9e6a20,
+    type: 3}
   currentAmmo: 0
 --- !u!1 &5124108813469143599
 GameObject:
@@ -1674,7 +1644,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 3220525451785956881}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Head Bone
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1712,7 +1682,7 @@ GameObject:
   - component: {fileID: 4675273601185339403}
   - component: {fileID: 8269984351549171698}
   - component: {fileID: 6614222729077801589}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Mech Hips
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1857,7 +1827,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 8351945550338666228}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Firepoint2
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1890,7 +1860,7 @@ GameObject:
   - component: {fileID: 8654825554018537076}
   - component: {fileID: 3116311399313013192}
   - component: {fileID: 8459566015798449806}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: L Foot Connector
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1973,7 +1943,7 @@ GameObject:
   - component: {fileID: 5158013343152630592}
   - component: {fileID: 927307345725821804}
   - component: {fileID: 5468369748669883143}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: L Leg Emitter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2056,7 +2026,7 @@ GameObject:
   - component: {fileID: 2443704636102300851}
   - component: {fileID: 8394216829643343184}
   - component: {fileID: 412768641671872812}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: R Foreleg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2140,7 +2110,7 @@ GameObject:
   - component: {fileID: 5697323727620495180}
   - component: {fileID: 5037877531215561342}
   - component: {fileID: 8571261608156825504}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: L Foreleg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2224,7 +2194,7 @@ GameObject:
   - component: {fileID: 8880353710528921436}
   - component: {fileID: 3268289322218423403}
   - component: {fileID: 1977528727622030539}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: R Leg Emitter
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2315,7 +2285,7 @@ GameObject:
   - component: {fileID: 2881387457793970516}
   - component: {fileID: 7774606675090810286}
   - component: {fileID: 1396283654011482716}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Enemy Mech
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2337,7 +2307,6 @@ Transform:
   m_Children:
   - {fileID: 6530041107634187749}
   - {fileID: 5448018451544245144}
-  - {fileID: 3494797318525787387}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3622838108416811556
@@ -2430,7 +2399,7 @@ MonoBehaviour:
   healthConfig: {fileID: 11400000, guid: f142b8b14dda04044889996dafb2da17, type: 2}
   currentHealth: 0
   currentShields: 0
-  bulletAllegiance: 2
+  bulletAllegiance: 1
 --- !u!114 &1692397168410733143
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2516,7 +2485,7 @@ MonoBehaviour:
   targetingRangeNear: 50
   attackRateNear: 3
   salvoDuration: 1
-  accuracy: 0.5
+  accuracy: 1
 --- !u!1 &7995958552544957947
 GameObject:
   m_ObjectHideFlags: 0
@@ -2529,7 +2498,7 @@ GameObject:
   - component: {fileID: 4047242433511859455}
   - component: {fileID: 180617066564330635}
   - component: {fileID: 3547649345286633932}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Thigh.L
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2626,7 +2595,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6057160444199897378}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Gun
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2661,7 +2630,7 @@ GameObject:
   - component: {fileID: 7789185671568292673}
   - component: {fileID: 6350063723396375486}
   - component: {fileID: 6875635522367023947}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: R Foot Connector
   m_TagString: Untagged
   m_Icon: {fileID: 0}

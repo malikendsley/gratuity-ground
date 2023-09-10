@@ -1,9 +1,9 @@
 using Endsley;
 using UnityEngine;
 
-public class EnemySpawnManager : MonoBehaviour
+public class MechSpawnManager : MonoBehaviour
 {
-    public static EnemySpawnManager Instance; // Static instance
+    public static MechSpawnManager Instance; // Static instance
     public GameObject enemyPrefab;
     public MechLocomotionConfig locomotionConfig;
     // TODO: Rest of configs here (health, combat, etc.)
