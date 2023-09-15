@@ -17,6 +17,21 @@ namespace Endsley
         [SerializeField] private BulletAllegiance bulletAllegiance;
         //HACK: go back to pooling once it's fixed
         [SerializeField] private GameObject bulletPrefab;
+        [Tooltip("Set this if you want to control the slot this weapon is in (for player weapons)")]
+        // Add getter and setter for AssignedSlot with default value of -1
+        // However, make them do nothing
+        // (We are just enforcing the interface, not actually exposing the value)
+        [SerializeField] private int assignedSlot = -1;
+        public int AssignedSlot
+        {
+            // Make the getter print a warning and return -1
+            get
+            {
+                Debug.LogWarning("This interface is only to enforce the interface. You shouldn't need this value.");
+                return assignedSlot;
+            }
+            set { }
+        }
         #endregion
 
         #region Private Variables
@@ -31,8 +46,8 @@ namespace Endsley
 
         #region Events
         public event Action<int> OnAmmoChange;
-        public event Action OnWeaponPrep;
-        public event Action<bool> OnWeaponFire;
+        public event Action OnWeaponStart;
+        public event Action OnWeaponStop;
         public event Action OnReload;
         #endregion
         private void Start()
@@ -44,8 +59,14 @@ namespace Endsley
             MechWeaponManager weaponManager = GetComponentInParent<MechWeaponManager>();
             if (weaponManager)
             {
-                //NOTE: If needed, can retrieve what slot you're in from here.
-                _ = weaponManager.RegisterWeaponNext(this);
+                if (assignedSlot == -1)
+                {
+                    _ = weaponManager.RegisterWeaponNext(this);
+                }
+                else
+                {
+                    weaponManager.RegisterWeapon(this, assignedSlot);
+                }
                 // Do something with assignedSlot if needed
             }
             else
@@ -88,7 +109,6 @@ namespace Endsley
                         nextShotTime = Time.time + fireDelay;
                         currentAmmo--;
                         OnAmmoChange?.Invoke((int)currentAmmo);
-                        OnWeaponFire?.Invoke(true);
                     }
                     else
                     {
@@ -107,13 +127,14 @@ namespace Endsley
         #region Weapon Actions
         public void StartWeapon(bool isPerfectShot)
         {
-            OnWeaponPrep?.Invoke();
+            OnWeaponStart?.Invoke();
             shouldFire = true;
             aimAssistOn = isPerfectShot;
         }
 
         public void StopWeapon()
         {
+            OnWeaponStop?.Invoke();
             shouldFire = false;
             aimAssistOn = false;
         }
@@ -140,7 +161,6 @@ namespace Endsley
         {
             isReloading = true;
             nextReloadTime = Time.time + delay;
-            Debug.Log("Reloading...");
 
             yield return new WaitForSeconds(delay);
 
@@ -148,7 +168,6 @@ namespace Endsley
             OnReload?.Invoke(); // Notify subscribed components
             OnAmmoChange?.Invoke((int)currentAmmo); // Notify ammo change
             isReloading = false;
-            Debug.Log("Reload Complete");
         }
 
         private void LookAt(GameObject target)

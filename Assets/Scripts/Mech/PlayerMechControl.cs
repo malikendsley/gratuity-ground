@@ -51,7 +51,7 @@ namespace Endsley
             {
                 Debug.LogError("InputActions for movement, jump, or firing are not set up. Please assign them.");
             }
-
+            // TODO: remove this, the target is the destination for most weapons it needs to be set to an actual target
             mechWeaponManager.SetTargetForAll(ReticleWorldPosition.Instance.GetGameObject());
         }
 

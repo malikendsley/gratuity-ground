@@ -1,7 +1,5 @@
 using System;
-using System.Collections;
 using System.Collections.Generic;
-using UnityEditor.Graphs;
 using UnityEngine;
 
 namespace Endsley
@@ -10,7 +8,6 @@ namespace Endsley
     {
 
         readonly Dictionary<int, IWeapon> weapons = new();
-        readonly Dictionary<int, GameObject> weaponTargetState = new();
         public event Action<int> OnWeaponRegistered;
         public event Action<int> OnWeaponUnregistered;
         //ID of the next weapon if the weaponManager is allowed to handle it

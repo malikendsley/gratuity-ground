@@ -20,7 +20,10 @@ namespace Endsley
         public GameObject enemyPrefab;
         public int defaultSquadSize = 5;
         public float defaultSquadSpread = 10f;
-        public float playerMinDistance = 50f;
+        public float playerMinSpawnDistance = 50f;
+        public float playerMaxSpawnDistance = 50f;
+        public float playerWaypointMinDistance = 5f;
+        public float playerWaypointMaxDistance = 10f;
         public float cooldownTime = 10f;
         private float timer;
         public bool canSpawn = false;
@@ -49,7 +52,7 @@ namespace Endsley
             if (Application.isPlaying)
             {
                 Gizmos.color = Color.red;
-                Gizmos.DrawWireSphere(PlayerMechControl.Instance.PlayerTransform.position, playerMinDistance);
+                Gizmos.DrawWireSphere(PlayerMechControl.Instance.PlayerTransform.position, playerMinSpawnDistance);
             }
         }
         private void Start()
@@ -68,7 +71,7 @@ namespace Endsley
                 foreach (var squad in squads)
                 {
                     // HACK: Properly parameterize this
-                    Vector3 newWaypoint = PlayerMechControl.Instance.GetNearbyPoint(playerMinDistance, playerMinDistance * 2f);
+                    Vector3 newWaypoint = PlayerMechControl.Instance.GetNearbyPoint(playerWaypointMinDistance, playerWaypointMaxDistance);
                     squad.SetWaypoint(newWaypoint);
                 }
 
@@ -116,7 +119,7 @@ namespace Endsley
             else
             {
                 // If the distance is greater than playminDistance, return true
-                if (Vector3.Distance(point, PlayerMechControl.Instance.PlayerTransform.position) > playerMinDistance)
+                if (Vector3.Distance(point, PlayerMechControl.Instance.PlayerTransform.position) > playerMinSpawnDistance)
                 {
                     Debug.Log("Point is out of view and out of range, returning true");
                     return true;

@@ -82,6 +82,7 @@ namespace Endsley
             {
                 //Handle damage, talk to the HealthManager
                 healthManager.TakeDamage(damage);
+                OnDamageTaken?.Invoke(damage);
             }
         }
 

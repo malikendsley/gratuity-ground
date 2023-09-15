@@ -13,13 +13,27 @@ namespace Endsley
         public float distanceThreshold = 1f;
         public float skipDistance = 3f;
         public float navMeshSampleDistance = 5f;
+        [Tooltip("If enabled, will stop moving if its forward direction is blocked by another mech")]
+        [SerializeField] private bool waitForOtherMechs = true;
+        [Tooltip("Distance to check for other mechs.")]
+        [SerializeField] private float waitForOtherMechsDistance = 5f;
+        [Tooltip("Angle in degrees to check for other mechs. 0 means only check directly in front of the mech.")]
+        [SerializeField] private float waitForOtherMechsAngle = 30f;
+        private SphereCollider mechCheckSphere;
         private NavMeshAgent agent;
         private NavMeshPath path;
         private List<Vector3> corners;
         private int currentCorner = 0;
         private MechController mechController;
-        // //HACK: make this inline again this after testing
-        // [SerializeField] private float angleToNextPoint;
+
+        private void OnDrawGizmos()
+        {
+            Gizmos.color = Color.red;
+            Gizmos.DrawWireSphere(transform.position, waitForOtherMechsDistance);
+            //Draw a wire arc in front of the object representing the angle
+
+        }
+
         void Start()
         {
             if (TryGetComponent(out NavMeshAgent navMeshAgent))
@@ -41,21 +55,54 @@ namespace Endsley
             {
                 Debug.LogWarning("No MechController found on this object. AI will not be able to move.");
             }
+            // Create a collider on this object to check for other mechs
+            mechCheckSphere = gameObject.AddComponent<SphereCollider>();
+            mechCheckSphere.isTrigger = true;
+            mechCheckSphere.radius = waitForOtherMechsDistance;
+
         }
-        // void OnDrawGizmos()
-        // {
-        //     if (active && corners != null && corners.Count > 0 && currentCorner < corners.Count)
-        //     {
-        //         // Draw a blue sphere at the immediate next point
-        //         Gizmos.color = Color.blue;
-        //         Gizmos.DrawSphere(corners[currentCorner], 0.5f);
-        //     }
-        // }
+
+        private void OnTriggerEnter(Collider other)
+        {
+            if (!waitForOtherMechs)
+            {
+                return;
+            }
+            // Check if the other collider is a mech
+            if (other.TryGetComponent(out MechController _))
+            {
+                // Check if the other mech is in front of this mech
+                Vector3 directionToOtherMech = other.transform.position - transform.position;
+                float angleToOtherMech = Vector3.SignedAngle(transform.forward, directionToOtherMech, Vector3.up);
+                if (Mathf.Abs(angleToOtherMech) <= waitForOtherMechsAngle)
+                {
+                    // Stop moving if the other mech is in front of this mech
+                    active = false;
+                }
+            }
+        }
+
+        private void OnTriggerExit(Collider other)
+        {
+            // Don't check waitForOtherMechs in case we changed the setting while the other mech was in the trigger
+            // Check if the other collider is a mech
+            if (other.TryGetComponent(out MechController _))
+            {
+                // Check if the other mech is in front of this mech
+                Vector3 directionToOtherMech = other.transform.position - transform.position;
+                float angleToOtherMech = Vector3.SignedAngle(transform.forward, directionToOtherMech, Vector3.up);
+                if (Mathf.Abs(angleToOtherMech) <= waitForOtherMechsAngle)
+                {
+                    // Resume moving if the other mech is no longer in front of this mech
+                    active = true;
+                }
+            }
+        }
+
         void Update()
         {
             if (active && corners.Count > 0)
             {
-                // // Draw the path
                 for (int i = 0; i < corners.Count - 1; i++)
                 {
                     Debug.DrawLine(corners[i], corners[i + 1], Color.red);
@@ -70,7 +117,6 @@ namespace Endsley
                 // If we're not looking at the target, rotate first
                 if (Mathf.Abs(angleToNextPoint) > angleThreshold)
                 {
-                    //Debug.Log("Rotating to heading: " + angleToNextPoint);
                     mechController.StopMoving();
                     mechController.RotateToTarget(nextPoint);
                 }
@@ -95,6 +141,10 @@ namespace Endsley
                     }
                 }
 
+            }
+            else
+            {
+                mechController.StopMoving();
             }
         }
 
