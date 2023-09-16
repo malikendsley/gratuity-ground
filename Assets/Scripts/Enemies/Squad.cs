@@ -29,6 +29,16 @@ namespace Endsley
             {
                 // Spawn the enemies, maybe from some sort of enemy spawn manager
                 GameObject enemy = Object.Instantiate(enemyPrefab, spawnPoint, Quaternion.identity, enemiesFolder);
+                // register the enemy with the enemy position tracker
+                //HACK: Formalize access to the CoM of the enemy (since the gameobject's center is in the feet)
+                if (enemy.transform.Find("CoM") == null)
+                {
+                    Debug.LogError("Enemy prefab does not have a CoM child.");
+                }
+                else
+                {
+                    EnemyPositionTracker.Instance.AddEnemy(enemy.transform.Find("CoM"));
+                }
                 // This enemy is guaranteed to have a MechController and a MovementAI
                 if (enemy.TryGetComponent(out MechController mechController))
                 {
@@ -48,8 +58,6 @@ namespace Endsley
                 }
                 Debug.Log("Spawning enemy at " + spawnPoint);
             }
-            // debug spheres were already drawn when the navmesh was sampled so no need to draw them again
-
         }
 
         public void SetWaypoint(Vector3 destination)

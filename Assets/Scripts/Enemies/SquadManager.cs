@@ -70,7 +70,6 @@ namespace Endsley
             {
                 foreach (var squad in squads)
                 {
-                    // HACK: Properly parameterize this
                     Vector3 newWaypoint = PlayerMechControl.Instance.GetNearbyPoint(playerWaypointMinDistance, playerWaypointMaxDistance);
                     squad.SetWaypoint(newWaypoint);
                 }
