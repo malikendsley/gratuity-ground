@@ -12,8 +12,7 @@ namespace Endsley
         [SerializeField] LayerMask occlusionLayerMask;
         private GameObject playerTarget;
         private GameObject lastTarget;
-        public event Action<GameObject> OnTargetChanged;
-        public event Action OnTargetCleared;
+        private WeaponsBus weaponsBus;
         private void Start()
         {
             playerTarget = null;
@@ -22,6 +21,7 @@ namespace Endsley
             {
                 Debug.LogError("EnemyPositionTracker not found in the scene. Please add one.");
             }
+            weaponsBus = WeaponsBusManager.Instance.GetOrCreateBus(PlayerMechTag.Instance.PlayerMech);
         }
 
         private void Update()
@@ -60,14 +60,7 @@ namespace Endsley
             if (playerTarget != lastTarget)
             {
                 Debug.Log(playerTarget != null ? $"Target is now {playerTarget.name}" : "Target is now null");
-                if (playerTarget == null)
-                {
-                    OnTargetCleared?.Invoke();
-                }
-                else
-                {
-                    OnTargetChanged?.Invoke(playerTarget);
-                }
+                weaponsBus.Emit(playerTarget ? WeaponEventType.OnTargetChange : WeaponEventType.OnTargetClear, new WeaponEventData { Target = playerTarget ? playerTarget : null });
 
                 lastTarget = playerTarget;
             }

@@ -1,4 +1,3 @@
-using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
@@ -14,7 +13,7 @@ using UnityEngine;
 
 namespace Endsley
 {
-    public class BasicMissileLauncher : MonoBehaviour, ILockWeapon
+    public class BasicMissileLauncher : MonoBehaviour, IWeapon
     {
         //TODO: put this in a config file
         #region Serialized Fields
@@ -52,18 +51,17 @@ namespace Endsley
         private GameObject lastTrackedTarget;
         private float nextFireTime = 0;
         private readonly List<GameObject> locks = new();
-        #endregion
-
-        #region Actions
-        public event Action<int> OnAmmoChange;
-        public event Action OnWeaponStart;
-        public event Action OnWeaponStop;
-        public event Action OnReload;
-        public event Action<GameObject> OnLockStack;
+        private WeaponsBus weaponsBus;
         #endregion
 
         private void Start()
         {
+            // Get the weapon bus for this mech
+            weaponsBus = WeaponsBusManager.Instance.GetOrCreateBus(GetComponentInParent<MechController>().gameObject);
+            if (weaponsBus == null)
+            {
+                Debug.LogError("No WeaponsBus found. This weapon will not be managed.");
+            }
             // Register self with Weapon Manager
             MechWeaponManager weaponManager = GetComponentInParent<MechWeaponManager>();
             if (weaponManager)
@@ -100,19 +98,18 @@ namespace Endsley
                 if (Time.time > nextFireTime)
                 {
                     // In here we have passed the first check so this will work
-                    if (locks.Count < maxLocks)
+                    if (locks.Count < maxLocks && trackedTarget != null)
                     {
-                        Debug.Log("Locking " + trackedTarget.name + "...");
                         locks.Add(trackedTarget);
-                        OnLockStack?.Invoke(trackedTarget);
                         nextFireTime = Time.time + lockTime;
+                        weaponsBus.Emit(WeaponEventType.OnLockStack, new WeaponEventData { Target = trackedTarget, Weapon = this });
+                        Debug.Log("Stacking lock on " + trackedTarget.name);
                     }
                     else
                     {
                         nextFireTime = Time.time + lockTime;
                     }
                 }
-                lastTrackedTarget = trackedTarget;
             }
         }
 
@@ -123,7 +120,6 @@ namespace Endsley
 
         public void SetTarget(GameObject target)
         {
-            Debug.Log("Missile target updated to: " + target.name + "...");
             trackedTarget = target;
         }
 
@@ -134,7 +130,7 @@ namespace Endsley
             // Begin acquiring locks
             Debug.Log("Locking...");
             shouldFire = true;
-            OnWeaponStart?.Invoke();
+            weaponsBus.Emit(WeaponEventType.OnWeaponStart, new WeaponEventData { Target = trackedTarget, Weapon = this });
         }
 
         // Fire a missile at each lock, if any and reset the lock list
@@ -151,7 +147,7 @@ namespace Endsley
             {
                 Debug.Log("No locks found. Not firing.");
             }
-            OnWeaponStop?.Invoke();
+            weaponsBus.Emit(WeaponEventType.OnWeaponStop, new WeaponEventData { Target = trackedTarget, Weapon = this });
         }
 
         private void FireMissiles(List<GameObject> locks)
@@ -164,7 +160,7 @@ namespace Endsley
 
         private IEnumerator FireMissilesCoroutine(List<GameObject> locks)
         {
-            Debug.Log("Firing" + locks.Count + "missiles");
+            // Debug.Log("Firing " + locks.Count + " missiles");
             // The locks variable will be modified by the coroutine, so we need to
             // make a copy of it
             List<GameObject> locksCopy = new(locks);
@@ -172,7 +168,7 @@ namespace Endsley
             {
                 Transform currentFirePoint = firePoints[fpIndex];
                 GameObject missile = Instantiate(missilePrefab, currentFirePoint.position, currentFirePoint.rotation);
-                Debug.Log("Missile being initialized to fire at " + lockTarget.name + " with allegiance " + bulletAllegiance + "...");
+                // Debug.Log("Missile being initialized to fire at " + lockTarget.name + " with allegiance " + bulletAllegiance + "...");
                 missile.GetComponent<Missile>().Initialize(lockTarget, bulletAllegiance);
                 // Cycle the fire point index
                 fpIndex = (fpIndex + 1) % firePoints.Count;

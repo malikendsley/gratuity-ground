@@ -1,3 +1,4 @@
+using System;
 using UnityEngine;
 using UnityEngine.AI;
 using UnityEngine.InputSystem;
@@ -20,6 +21,9 @@ namespace Endsley
         [SerializeField] private InputAction fire1Control;
         [SerializeField] private InputAction fire2Control;
 
+        private Action<WeaponEventData> HandleOnTargetChange;
+        private Action<WeaponEventData> HandleOnWeaponClear;
+        private WeaponsBus weaponsBus;
         void Awake()
         {
             if (Instance == null)
@@ -52,7 +56,18 @@ namespace Endsley
                 Debug.LogError("InputActions for movement, jump, or firing are not set up. Please assign them.");
             }
             // TODO: remove this, the target is the destination for most weapons it needs to be set to an actual target
-            mechWeaponManager.SetTargetForAll(ReticleWorldPosition.Instance.GetGameObject());
+            HandleOnTargetChange = (WeaponEventData data) => mechWeaponManager.SetTargetForAll(data.Target);
+            HandleOnWeaponClear = (WeaponEventData data) => mechWeaponManager.SetTargetForAll(null);
+            weaponsBus = WeaponsBusManager.Instance.GetOrCreateBus(PlayerMechTag.Instance.PlayerMech);
+            if (weaponsBus == null)
+            {
+                Debug.LogError("WeaponsBus not found for player mech. Please add one.");
+            }
+            else
+            {
+                weaponsBus.Subscribe(WeaponEventType.OnTargetChange, HandleOnTargetChange);
+                weaponsBus.Subscribe(WeaponEventType.OnTargetClear, HandleOnWeaponClear);
+            }
         }
 
         void OnEnable()
@@ -118,28 +133,25 @@ namespace Endsley
         void HandleFire2Down(InputAction.CallbackContext context)
         {
             // Your existing logic
-            Debug.Log("Fire 2 pressed");
             mechWeaponManager.StartWeapon(2);
         }
 
         void HandleFire1Up(InputAction.CallbackContext context)
         {
             // Your existing logic
-            Debug.Log("Fire 1 released");
             mechWeaponManager.StopWeapon(1);
         }
 
         void HandleFire2Up(InputAction.CallbackContext context)
         {
             // Your existing logic
-            Debug.Log("Fire 2 released");
             mechWeaponManager.StopWeapon(2);
         }
 
         public Vector3 GetNearbyPoint(float minRadius, float maxRadius)
         {
-            float randomRadius = Random.Range(minRadius, maxRadius);
-            Vector3 randomDirection = Random.insideUnitSphere * randomRadius;
+            float randomRadius = UnityEngine.Random.Range(minRadius, maxRadius);
+            Vector3 randomDirection = UnityEngine.Random.insideUnitSphere * randomRadius;
             randomDirection += transform.position;
 
             if (NavMesh.SamplePosition(randomDirection, out NavMeshHit hit, randomRadius, NavMesh.AllAreas))
@@ -148,6 +160,12 @@ namespace Endsley
             }
             Debug.LogWarning("Could not find a nearby point for GetNearbyPoint().");
             return Vector3.zero;
+        }
+
+
+        private void OnDestroy()
+        {
+            weaponsBus.Unsubscribe(WeaponEventType.OnTargetChange, HandleOnTargetChange);
         }
 
     }

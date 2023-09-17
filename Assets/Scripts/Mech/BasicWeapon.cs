@@ -152,7 +152,10 @@ namespace Endsley
             }
         }
 
-        public void SetTarget(GameObject target) => trackedTarget = target;
+        public void SetTarget(GameObject target)
+        {
+            trackedTarget = target;
+        }
         #endregion
 
         #region Private Functions

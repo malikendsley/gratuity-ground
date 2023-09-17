@@ -1,5 +1,7 @@
+using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.UI;
 
 namespace Endsley
 {
@@ -14,7 +16,11 @@ namespace Endsley
         [SerializeField] private GameObject hudCanvas;
 
         public static LockManager Instance { get; private set; }
-
+        private WeaponsBus weaponsBus;
+        private Action<WeaponEventData> HandleOnLockStack;
+        private Action<WeaponEventData> HandleOnWeaponStop;
+        private Action<WeaponEventData> HandleOnTargetChange;
+        private Action<WeaponEventData> HandleOnTargetClear;
         private void Start()
         {
             if (Instance == null)
@@ -26,23 +32,32 @@ namespace Endsley
                 Destroy(gameObject);
             }
             tentativeReticleSprite = Instantiate(sprite);
+            tentativeReticleSprite.GetComponent<Image>().color = Color.green;
+
             tentativeReticleSprite.transform.SetParent(hudCanvas.transform, false);
             tentativeReticleSprite.SetActive(false);
 
-            // HACK: Find a more robust way to do this
-            // Get the targeting system from the main camera
-            targetingSystem = Camera.main.GetComponent<TargetingSystem>();
-            if (!targetingSystem)
+            // Grab the weapons bus for the player mech
+            weaponsBus = WeaponsBusManager.Instance.GetOrCreateBus(PlayerMechTag.Instance.PlayerMech);
+            if (weaponsBus == null)
             {
-                Debug.LogError("TargetingSystem not assigned to the lockmanager. Please add one.");
+                Debug.LogError("WeaponsBus not found for player mech. Please add one.");
             }
             else
             {
-                // Subscribe to the targeting system's OnTargetChanged event
-                targetingSystem.OnTargetChanged += SetCurrentTarget;
-                targetingSystem.OnTargetCleared += ClearCurrentTarget;
+                // OnLockStack draws (and tracks) new reticles for each enemy that is locked
+                // OnWeaponStop clears the tracking reticles
+                HandleOnLockStack = (WeaponEventData data) => AddEnemy(data.Target);
+                HandleOnWeaponStop = (WeaponEventData data) => ClearAllTargets();
+                HandleOnTargetChange = (WeaponEventData data) => SetCurrentTarget(data.Target);
+                HandleOnTargetClear = (WeaponEventData data) => ClearCurrentTarget();
+                weaponsBus.Subscribe(WeaponEventType.OnLockStack, HandleOnLockStack);
+                weaponsBus.Subscribe(WeaponEventType.OnWeaponStop, HandleOnWeaponStop);
+                weaponsBus.Subscribe(WeaponEventType.OnTargetChange, HandleOnTargetChange);
+                weaponsBus.Subscribe(WeaponEventType.OnTargetClear, HandleOnTargetClear);
             }
         }
+
 
         private void Update()
         {
@@ -55,7 +70,7 @@ namespace Endsley
 
             // If there's a current target, draw a reticle sprite over their position, mapped to the screen
             // We are using a rect transform
-            if (currentTarget)
+            if (currentTarget && !trackedEnemies.Contains(currentTarget))
             {
                 Vector3 screenPos = Camera.main.WorldToScreenPoint(currentTarget.transform.position);
                 tentativeReticleSprite.transform.position = screenPos;
@@ -69,19 +84,25 @@ namespace Endsley
 
         public void AddEnemy(GameObject enemy)
         {
+            Debug.Log("LockManager: Adding enemy " + enemy.name);
             // Don't draw a reticle for an enemy that's already being tracked
             if (!trackedEnemies.Contains(enemy))
             {
                 trackedEnemies.Add(enemy);
                 // Instantiate a new reticle sprite at the enemy's position
                 Vector3 screenPos = Camera.main.WorldToScreenPoint(enemy.transform.position);
-                GameObject reticle = Instantiate(sprite, screenPos, Quaternion.identity);
+                GameObject reticle = Instantiate(sprite);
+                // Change the tint of the reticle to blue
+                reticle.GetComponent<Image>().color = Color.red;
+                reticle.transform.SetParent(hudCanvas.transform, false);
+                reticle.transform.position = screenPos;
                 trackingReticleSprites.Add(reticle);
             }
         }
 
         public void RemoveEnemy(GameObject enemy)
         {
+            Debug.Log("LockManager: Removing enemy " + enemy.name);
             int index = trackedEnemies.IndexOf(enemy);
             if (index != -1)
             {
@@ -89,6 +110,17 @@ namespace Endsley
                 Destroy(trackingReticleSprites[index]);
                 trackingReticleSprites.RemoveAt(index);
             }
+        }
+
+        public void ClearAllTargets()
+        {
+            Debug.Log("LockManager: Clearing all targets");
+            trackedEnemies.Clear();
+            foreach (GameObject reticle in trackingReticleSprites)
+            {
+                Destroy(reticle);
+            }
+            trackingReticleSprites.Clear();
         }
 
         public void SetCurrentTarget(GameObject enemy)
@@ -102,6 +134,13 @@ namespace Endsley
             Debug.Log("LockManager: Clearing current target");
             currentTarget = null;
         }
-
+        private void OnDestroy()
+        {
+            if (weaponsBus != null)
+            {
+                weaponsBus.Unsubscribe(WeaponEventType.OnLockStack, HandleOnLockStack);
+                weaponsBus.Unsubscribe(WeaponEventType.OnWeaponStop, HandleOnWeaponStop);
+            }
+        }
     }
 }

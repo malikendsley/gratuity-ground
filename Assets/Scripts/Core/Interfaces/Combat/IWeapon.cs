@@ -1,4 +1,3 @@
-using System;
 using UnityEngine;
 namespace Endsley
 {
@@ -13,11 +12,5 @@ namespace Endsley
         // Int for the desired weapon slot for player weapons. 
         // -1 for no slot (take next available)
         int AssignedSlot { get; set; }
-
-        public event Action<int> OnAmmoChange;
-        public event Action OnWeaponStart;
-        //Bool is whether the weapon was successfully fired
-        public event Action OnWeaponStop;
-        public event Action OnReload;
     }
 }
