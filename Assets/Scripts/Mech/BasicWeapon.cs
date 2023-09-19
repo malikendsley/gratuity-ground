@@ -7,7 +7,8 @@ namespace Endsley
     public class Basic1AxisWeapon : MonoBehaviour, IWeapon
     {
         #region Serialized Fields
-        [SerializeField] private GameObject trackedTarget;
+        [SerializeField] private GameObject trackingTarget;
+        [SerializeField] private GameObject target;
         [SerializeField] private Transform defaultForward;
         [SerializeField] private Transform firePoint;
         [SerializeField] private Transform fireThrough;
@@ -76,7 +77,8 @@ namespace Endsley
         }
         private void Update()
         {
-            LookAt(trackedTarget ? trackedTarget : defaultForward.gameObject);
+            // lookat target > trackingTarget > defaultForward
+            LookAt(target != null ? target : trackingTarget != null ? trackingTarget : defaultForward.gameObject);
 
             //If we should fire, try to fire every time the time is greater than the next shot time
             if (shouldFire)
@@ -86,8 +88,6 @@ namespace Endsley
                 {
                     if (currentAmmo > 0)
                     {
-                        Transform aimTarget = aimAssistOn ? trackedTarget.transform : null;
-
                         // Get bullet from pool and fire
                         Bullet bullet = Instantiate(bulletPrefab, firePoint.position, transform.rotation).GetComponent<Bullet>();
                         if (!bullet)
@@ -95,13 +95,13 @@ namespace Endsley
                             Debug.LogWarning("No bullet available in pool. Consider increasing pool size.");
                             return;
                         }
-                        if (trackedTarget)
+                        if (aimAssistOn)
                         {
-                            bullet.InitNoAimAssist(firePoint.position, trackedTarget.transform.position - firePoint.position, bulletAllegiance);
+                            bullet.InitAimAssist(firePoint.position, bulletAllegiance, target.transform);
                         }
                         else
                         {
-                            bullet.InitAimAssist(firePoint.position, fireThrough.position - firePoint.position, bulletAllegiance, aimTarget);
+                            bullet.InitNoAimAssist(firePoint.position, fireThrough.position - firePoint.position, bulletAllegiance);
                         }
 
                         // Usual code
@@ -154,7 +154,7 @@ namespace Endsley
 
         public void SetTarget(GameObject target)
         {
-            trackedTarget = target;
+            this.target = target;
         }
         #endregion
 

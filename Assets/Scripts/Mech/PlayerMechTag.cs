@@ -7,7 +7,7 @@ namespace Endsley
         public static PlayerMechTag Instance { get; private set; }
         // Easily allow other scripts to get the player mech
         public GameObject PlayerMech { get; set; }
-
+        public GameObject PlayerCoM { get; set; }
         private void Awake()
         {
             if (Instance == null)
@@ -19,6 +19,11 @@ namespace Endsley
             {
                 Destroy(gameObject);
             }
+        }
+
+        private void Start()
+        {
+            PlayerCoM = transform.Find("CoM").gameObject;
         }
     }
 }

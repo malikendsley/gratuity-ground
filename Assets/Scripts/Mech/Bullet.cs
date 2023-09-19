@@ -14,16 +14,11 @@ namespace Endsley
 
         private Transform target;  // Set this if aim-assisted
 
-        [SerializeField] private Rigidbody rb;
         private float timeToLive;  // Timer to track bullet's lifetime
         private bool isAimAssisted = false;
+        private Vector3 direction = Vector3.zero;
         void Start()
         {
-            if (!TryGetComponent(out rb))
-            {
-                Debug.LogError("No rigidbody attached to bullet");
-            }
-            rb.isKinematic = false;
             timeToLive = 0f;  // Initialize the lifetime timer
         }
 
@@ -33,17 +28,20 @@ namespace Endsley
             transform.position = position;
             isAimAssisted = false;
             timeToLive = 0f;  // Reset the lifetime timer
-            rb.isKinematic = false;
-            rb.AddForce(direction.normalized * speed, ForceMode.Impulse);
+            this.direction = direction.normalized;
         }
 
-        public void InitAimAssist(Vector3 position, Vector3 direction, BulletAllegiance allegiance, Transform target)
+        public void InitAimAssist(Vector3 position, BulletAllegiance allegiance, Transform target)
         {
+            Debug.Log("Init aim assist");
+            if (target == null)
+            {
+                Debug.LogWarning("Target is null");
+            }
             this.allegiance = allegiance;
             transform.position = position;
             isAimAssisted = true;
             this.target = target;
-            rb.isKinematic = true;
         }
 
         void Update()
@@ -52,10 +50,13 @@ namespace Endsley
             // If aim assist is true, track the target
             if (isAimAssisted)
             {
-                //NOTE: Will need a different solution if bullets aren't spherical
-                transform.LookAt(target);
-                Debug.DrawLine(transform.position, target.position, Color.red);
-                transform.Translate(speed * Time.deltaTime * Vector3.forward);
+                // Move speed units towards the target
+                transform.position = Vector3.MoveTowards(transform.position, target.position, speed * Time.deltaTime);
+            }
+            else
+            {
+                // Move speed units in the direction of the bullet
+                transform.position += speed * Time.deltaTime * direction;
             }
             // Check if the bullet should be returned to the pool
             if (timeToLive >= lifetime)

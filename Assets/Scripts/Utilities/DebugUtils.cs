@@ -16,5 +16,22 @@ namespace Endsley
 
             Object.Destroy(debugDot, duration);
         }
+
+        public static void DrawTempDebugLine(Vector3 start, Vector3 end, float duration = 2f, Color? color = null)
+        {
+            GameObject debugLine = new GameObject("DebugLine");
+            debugLine.transform.position = start;
+            debugLine.AddComponent<LineRenderer>();
+            LineRenderer lineRenderer = debugLine.GetComponent<LineRenderer>();
+            lineRenderer.SetPosition(0, start);
+            lineRenderer.SetPosition(1, end);
+
+            if (color.HasValue)
+            {
+                lineRenderer.material.color = color.Value;
+            }
+
+            Object.Destroy(debugLine, duration);
+        }
     }
 }

@@ -37,6 +37,11 @@ namespace Endsley
                 }
                 else
                 {
+                    // HACK: Proper usage of the enemy position tracker requires that 
+                    // all spawned enemies are registered with it. It would make more
+                    // sense to place the registration logic closer to the spawn logic
+                    // in the future, there may be a factory for enemies that handles
+                    // this logic
                     EnemyPositionTracker.Instance.AddEnemy(enemy.transform.Find("CoM"));
                 }
                 // This enemy is guaranteed to have a MechController and a MovementAI

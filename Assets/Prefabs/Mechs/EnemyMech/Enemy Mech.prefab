@@ -1634,6 +1634,7 @@ MonoBehaviour:
   bulletAllegiance: 1
   bulletPrefab: {fileID: 3983898183347926418, guid: 1d0e6e2294718e446980bdee7a9e6a20,
     type: 3}
+  assignedSlot: -1
   currentAmmo: 0
 --- !u!1 &5124108813469143599
 GameObject:
@@ -1848,6 +1849,37 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 6495795077802229066}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &5701527272559739226
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 4922027314289425535}
+  m_Layer: 8
+  m_Name: CoM
+  m_TagString: CoM
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!4 &4922027314289425535
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5701527272559739226}
+  serializedVersion: 2
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 4.75, z: 0.5}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_ConstrainProportionsScale: 0
+  m_Children: []
+  m_Father: {fileID: 8590976686628104301}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &5927198648803142735
 GameObject:
@@ -2307,6 +2339,7 @@ Transform:
   m_Children:
   - {fileID: 6530041107634187749}
   - {fileID: 5448018451544245144}
+  - {fileID: 4922027314289425535}
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &3622838108416811556
@@ -2462,6 +2495,9 @@ MonoBehaviour:
   distanceThreshold: 1
   skipDistance: 10
   navMeshSampleDistance: 5
+  waitForOtherMechs: 1
+  waitForOtherMechsDistance: 5
+  waitForOtherMechsAngle: 30
 --- !u!114 &1396283654011482716
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -2477,15 +2513,16 @@ MonoBehaviour:
   playerMask:
     serializedVersion: 2
     m_Bits: 8
-  ignoreMask:
+  obstacleMask:
     serializedVersion: 2
     m_Bits: 64
   targetingRangeFar: 100
-  attackRateFar: 6
+  attackRateFar: 3
   targetingRangeNear: 50
-  attackRateNear: 3
+  attackRateNear: 1.5
   salvoDuration: 1
   accuracy: 1
+  targetVolumeThreshold: 0.5
 --- !u!1 &7995958552544957947
 GameObject:
   m_ObjectHideFlags: 0

@@ -1,14 +1,15 @@
 using Endsley;
 using UnityEngine;
 using System;
-using System.Collections;
+using System.Collections.Generic;
 // Simple independent AI that automatically attacks a set or acquired target based on distance.
 public class CombatAI : MonoBehaviour
 {
     //TODO: Convert this into a config like an "attack profile"
+    [Tooltip("Objects using this layer are part of the player's mech.")]
     public LayerMask playerMask;
-    [Tooltip("Layers to ignore when checking for line of sight")]
-    public LayerMask ignoreMask;
+    [Tooltip("Layers to use when checking for line of sight")]
+    public LayerMask obstacleMask;
     public float targetingRangeFar = 50f;
     //TODO: Difficulty scaling
     [Tooltip("Seconds between attacks")]
@@ -21,6 +22,9 @@ public class CombatAI : MonoBehaviour
     [Tooltip("Accuracy of the AI's aim. Percentage that a salvo will fire with perfect accuracy.")]
     [Range(0f, 1f)]
     public float accuracy = 0.5f;
+    [Tooltip("The required un-occulded volume fraction of the target to be considered a valid target.")]
+    [Range(0f, 1f)]
+    public float targetVolumeThreshold = 0.5f;
     private GameObject target;
     private MechWeaponManager mechWeaponManager;
     private AttackState state;
@@ -28,6 +32,8 @@ public class CombatAI : MonoBehaviour
     private float currentAttackRate;
     private bool isFiring = false;
     private float salvoEndTime = 0f;
+    private Transform CoM;
+    private GameObject lastTarget;
 
 
     private enum AttackState
@@ -61,73 +67,104 @@ public class CombatAI : MonoBehaviour
         {
             Debug.LogWarning("Salvo duration is longer than one of the attack rates. This will cause the AI to fire continuously.");
         }
+        // Find an object labeled CoM in this object's children
+        CoM = transform.Find("CoM");
     }
 
     private void Update()
     {
         target = HandleTargeting();
-        if (target != null)
+        HandleState();
+        if (target != lastTarget)
         {
-            Debug.Log("Setting target for all weapons");
             mechWeaponManager.SetTargetForAll(target);
         }
         HandleFireControl();
+        lastTarget = target;
     }
 
+    // Returns the target if one is found, otherwise null
     private GameObject HandleTargeting()
     {
-        Collider[] colliders = new Collider[1];
-        Physics.OverlapSphereNonAlloc(transform.position, targetingRangeFar, colliders, playerMask);
-        if (colliders[0] == null)
+        // Initially check if we can just see the player
+        if (!Physics.Linecast(CoM.position, PlayerMechTag.Instance.PlayerCoM.transform.position, obstacleMask))
         {
-            // Debug.Log("No target found");
-            return null;
-        }
-        else
-        {
-            // Debug.Log("Target found: " + colliders[0].gameObject.name);
+            return PlayerMechTag.Instance.PlayerCoM;
         }
 
-        float distance = Vector3.Distance(transform.position, colliders[0].transform.position);
-        //TODO: If this is buggy, cast from a custom origin point
-        bool hasLineOfSight = !Physics.Linecast(transform.position, colliders[0].transform.position, ignoreMask);
-        // Draw the linecast's line
-        Debug.DrawLine(transform.position, colliders[0].transform.position, hasLineOfSight ? Color.green : Color.red);
-        // if (!hasLineOfSight)
-        // {
-        //     Debug.Log("No line of sight");
-        // }
-        if (distance <= targetingRangeNear && hasLineOfSight)
+        // Otherwise, try to target the largest section of the player if enough of it is visible
+        List<Collider> playerColliders = new(Physics.OverlapSphere(CoM.position, targetingRangeFar, playerMask));
+        float totalVolume = 0f;
+        float unobstructedVolume = 0f;
+        List<Collider> unobstructedColliders = new();
+
+        foreach (Collider collider in playerColliders)
         {
-            //Debug.Log("Targeting near");
-            state = AttackState.TargetingNear;
-            currentAttackRate = attackRateNear;
+            float colliderVolume = Volume(collider);
+            totalVolume += colliderVolume;
+
+            if (!Physics.Linecast(CoM.position, collider.bounds.center, obstacleMask))
+            {
+                unobstructedVolume += colliderVolume;
+                unobstructedColliders.Add(collider);
+
+                if (unobstructedVolume / totalVolume >= targetVolumeThreshold)
+                {
+                    Debug.Log("Setting target to " + unobstructedColliders[0].gameObject.name);
+                    Debug.DrawLine(CoM.position, collider.bounds.center, Color.green);
+                    return unobstructedColliders[0].gameObject;
+                }
+            }
         }
-        else if (distance <= targetingRangeFar && hasLineOfSight)
+
+        return null;
+    }
+
+    private float Volume(Collider collider)
+    {
+        Vector3 size = collider.bounds.size;
+        return size.x * size.y * size.z;
+    }
+    // based on the current target, determine the state
+    // distance > targetingrangefar = idle
+    // targetingrangefar > distance > targetingrangenear = targetingfar
+    // targetingrangenear > distance = targetingnear
+    private void HandleState()
+    {
+        if (target == null)
         {
-            //Debug.Log("Targeting far");
+            Debug.Log("No target");
+            state = AttackState.Idle;
+            return;
+        }
+        float distance = Vector3.Distance(CoM.position, target.transform.position);
+        if (distance > targetingRangeFar)
+        {
+            Debug.Log("Target out of range");
+            state = AttackState.Idle;
+            target = null;
+            return;
+        }
+        if (distance > targetingRangeNear)
+        {
+            Debug.Log("Target in far range");
             state = AttackState.TargetingFar;
             currentAttackRate = attackRateFar;
+            return;
         }
-        else
-        {
-            //Debug.Log("Idle");
-            state = AttackState.Idle;
-        }
-
-        return state == AttackState.Idle ? null : colliders[0].gameObject;
+        Debug.Log("Target in near range");
+        state = AttackState.TargetingNear;
+        currentAttackRate = attackRateNear;
     }
 
     private void HandleFireControl()
     {
 
+
         // If we have a target, and we are not firing, and the cooldown has passed, start firing
         if (!isFiring && target != null && Time.time - lastAttackTime >= currentAttackRate)
         {
-            // Debug.Log("Starting fire");
-            // Debug.Log("Cooldown has passed" + Time.time + " - " + lastAttackTime + " >= " + currentAttackRate);
-            // Debug.Log("Target is not null");
-            // Debug.Log("isFiring is false");
+            Debug.Log("Starting weapons to fire at target: " + target.name);
             isFiring = true;
             float random = UnityEngine.Random.Range(0f, 1f);
             if (random <= accuracy) Debug.Log("Firing with perfect accuracy");
@@ -137,17 +174,13 @@ public class CombatAI : MonoBehaviour
             lastAttackTime = Time.time;
             return;
         }
+
         // If we lose the target, are in idle, or the salvo duration has passed, stop firing
         if (target == null || Time.time >= salvoEndTime || state == AttackState.Idle)
         {
-            // Debug.Log("Stopping fire");
-            // if (target == null) Debug.Log("Target is null");
-            // if (Time.time >= salvoEndTime) Debug.Log("Salvo duration has passed:" + Time.time + " >= " + salvoEndTime);
-            // if (state == AttackState.Idle) Debug.Log("State is idle");
             isFiring = false;
             mechWeaponManager.StopAllWeapons();
             return;
         }
-
     }
 }
