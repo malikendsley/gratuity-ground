@@ -3,65 +3,51 @@ using System.Collections;
 
 namespace Endsley
 {
-
-
     public class Missile : MonoBehaviour
     {
         [SerializeField] private BulletAllegiance bulletAllegiance;
         private GameObject target;
-        //TODO: Make this a scriptable object
-        [SerializeField] private float popUpHeight = 10f;
-        [SerializeField] private float popUpSpeed = 20f;
-        [SerializeField] private float cruiseSpeed = 20f;
-        [Tooltip("The missile uses a few cutoffs to move between phases. Increasing this makes the missile feel 'snappier'")]
+        [SerializeField] private float speed = 20f;
+        [SerializeField] private float arcHeight = 10f;
         [SerializeField] private float fudgeFactor = 0.3f;
 
         public void Initialize(GameObject target, BulletAllegiance bulletAllegiance)
         {
             this.bulletAllegiance = bulletAllegiance;
             this.target = target;
-            StartCoroutine(MissileSequence());
+            StartCoroutine(ArcToTarget());
         }
 
-        private IEnumerator MissileSequence()
+        private IEnumerator ArcToTarget()
         {
-            yield return StartCoroutine(PopUp());
-            yield return StartCoroutine(Turn());
-            yield return StartCoroutine(Cruise());
-        }
+            Vector3 startPoint = transform.position;
+            Vector3 endPoint = target.transform.position;
+            Vector3 controlPoint = startPoint + (endPoint - startPoint) / 2 + Vector3.up * arcHeight;
 
-        private IEnumerator PopUp()
-        {
-            Vector3 targetPosition = transform.position + Vector3.up * popUpHeight;
-            while (Vector3.Distance(transform.position, targetPosition) > fudgeFactor)
+            float t = 0f;
+            while (t < 1f)
             {
-                // Parameterize this with a speed variable
-                transform.position = Vector3.MoveTowards(transform.position, targetPosition, Time.deltaTime * popUpSpeed);
+                t += Time.deltaTime * speed;
+                Vector3 m1 = Vector3.Lerp(startPoint, controlPoint, t);
+                Vector3 m2 = Vector3.Lerp(controlPoint, endPoint, t);
+                transform.position = Vector3.Lerp(m1, m2, t);
+
+                // Update rotation to face target
+                Vector3 direction = (target.transform.position - transform.position).normalized;
+                if (direction != Vector3.zero)
+                {
+                    transform.rotation = Quaternion.LookRotation(direction);
+                }
+
+                if (Vector3.Distance(transform.position, endPoint) <= fudgeFactor)
+                {
+                    // Destroy the missile or trigger some explosion effect
+                    Destroy(gameObject);
+                    break;
+                }
+
                 yield return null;
             }
-        }
-
-        private IEnumerator Turn()
-        {
-            Vector3 direction = (target.transform.position - transform.position).normalized;
-            Quaternion targetRotation = Quaternion.LookRotation(direction);
-            // Have a generous cutoff for the angle, then just point the missile at the target
-            while (Quaternion.Angle(transform.rotation, targetRotation) > fudgeFactor * 10)
-            {
-                transform.rotation = Quaternion.Slerp(transform.rotation, targetRotation, Time.deltaTime);
-                yield return null;
-            }
-        }
-
-        private IEnumerator Cruise()
-        {
-            while (Vector3.Distance(transform.position, target.transform.position) > fudgeFactor)
-            {
-                transform.position = Vector3.MoveTowards(transform.position, target.transform.position, Time.deltaTime * cruiseSpeed);
-                yield return null;
-            }
-            // Here, you can destroy the missile or trigger some explosion effect
-            Destroy(gameObject);
         }
     }
 }

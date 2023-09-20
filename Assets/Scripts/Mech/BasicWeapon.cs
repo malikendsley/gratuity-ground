@@ -95,12 +95,14 @@ namespace Endsley
                             Debug.LogWarning("No bullet available in pool. Consider increasing pool size.");
                             return;
                         }
-                        if (aimAssistOn)
+                        if (aimAssistOn || target != null)
                         {
+                            Debug.Log("Firing with aim assist");
                             bullet.InitAimAssist(firePoint.position, bulletAllegiance, target.transform);
                         }
                         else
                         {
+                            Debug.Log("Firing without aim assist");
                             bullet.InitNoAimAssist(firePoint.position, fireThrough.position - firePoint.position, bulletAllegiance);
                         }
 
