@@ -10,6 +10,7 @@ namespace Endsley
         [SerializeField] private float speed = 20f;
         [SerializeField] private float arcHeight = 10f;
         [SerializeField] private float fudgeFactor = 0.3f;
+        [SerializeField] private bool missileActive = true;
 
         public void Initialize(GameObject target, BulletAllegiance bulletAllegiance)
         {
@@ -39,10 +40,12 @@ namespace Endsley
                     transform.rotation = Quaternion.LookRotation(direction);
                 }
 
-                if (Vector3.Distance(transform.position, endPoint) <= fudgeFactor)
+                if (Vector3.Distance(transform.position, endPoint) <= fudgeFactor && missileActive)
                 {
-                    // Destroy the missile or trigger some explosion effect
-                    Destroy(gameObject);
+                    // Disable renderer and destroy after 10 seconds
+                    missileActive = false;
+                    GetComponent<Renderer>().enabled = false;
+                    Destroy(gameObject, 10f);
                     break;
                 }
 
