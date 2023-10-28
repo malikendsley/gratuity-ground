@@ -133,26 +133,26 @@ public class CombatAI : MonoBehaviour
     {
         if (target == null)
         {
-            Debug.Log("No target");
+            // Debug.Log("No target");
             state = AttackState.Idle;
             return;
         }
         float distance = Vector3.Distance(CoM.position, target.transform.position);
         if (distance > targetingRangeFar)
         {
-            Debug.Log("Target out of range");
+            // Debug.Log("Target out of range");
             state = AttackState.Idle;
             target = null;
             return;
         }
         if (distance > targetingRangeNear)
         {
-            Debug.Log("Target in far range");
+            // Debug.Log("Target in far range");
             state = AttackState.TargetingFar;
             currentAttackRate = attackRateFar;
             return;
         }
-        Debug.Log("Target in near range");
+        // Debug.Log("Target in near range");
         state = AttackState.TargetingNear;
         currentAttackRate = attackRateNear;
     }

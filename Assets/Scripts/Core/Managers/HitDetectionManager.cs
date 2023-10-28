@@ -5,7 +5,7 @@ namespace Endsley
 {
     public enum BulletAllegiance
     {
-        Ally,
+        Player,
         Enemy,
         Unset,
     }
