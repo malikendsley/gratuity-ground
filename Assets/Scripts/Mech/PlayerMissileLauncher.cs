@@ -13,7 +13,7 @@ using UnityEngine;
 
 namespace Endsley
 {
-    public class BasicMissileLauncher : MonoBehaviour, IWeapon
+    public class PlayerMissileLauncher : MonoBehaviour, IWeapon
     {
         //TODO: put this in a config file
         #region Serialized Fields
@@ -30,8 +30,7 @@ namespace Endsley
         [Tooltip("Where the missile initially spawns")]
         [SerializeField] private List<Transform> firePoints;
         private int fpIndex = 0;
-        [Tooltip("Whether this weapon is enemy or player")]
-        [SerializeField] private BulletAllegiance bulletAllegiance;
+
         [SerializeField] private int assignedSlot = -1;
         public int AssignedSlot
         {
@@ -169,7 +168,7 @@ namespace Endsley
                 Transform currentFirePoint = firePoints[fpIndex];
                 GameObject missile = Instantiate(missilePrefab, currentFirePoint.position, currentFirePoint.rotation);
                 // Debug.Log("Missile being initialized to fire at " + lockTarget.name + " with allegiance " + bulletAllegiance + "...");
-                missile.GetComponent<Missile>().Initialize(lockTarget, bulletAllegiance);
+                missile.GetComponent<Missile>().Initialize(lockTarget, BulletAllegiance.Player);
                 // Cycle the fire point index
                 fpIndex = (fpIndex + 1) % firePoints.Count;
 
