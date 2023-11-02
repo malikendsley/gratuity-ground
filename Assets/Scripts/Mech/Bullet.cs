@@ -7,7 +7,7 @@ namespace Endsley
     {
         public float speed = 50f;
         public int damage = 1;
-        public BulletAllegiance allegiance;
+        public Allegiance allegiance;
         public LayerMask interactableLayers;  // Layers that this bullet can interact with
         [Tooltip("Seconds before returning to the pool")]
         public float lifetime = 5f;
@@ -22,7 +22,7 @@ namespace Endsley
             timeToLive = 0f;  // Initialize the lifetime timer
         }
 
-        public void InitNoAimAssist(Vector3 position, Vector3 direction, BulletAllegiance allegiance)
+        public void InitNoAimAssist(Vector3 position, Vector3 direction, Allegiance allegiance)
         {
             this.allegiance = allegiance;
             transform.position = position;
@@ -31,7 +31,7 @@ namespace Endsley
             this.direction = direction.normalized;
         }
 
-        public void InitAimAssist(Vector3 position, BulletAllegiance allegiance, Transform target)
+        public void InitAimAssist(Vector3 position, Allegiance allegiance, Transform target)
         {
             Debug.Log("Init aim assist");
             if (target == null)
@@ -73,7 +73,7 @@ namespace Endsley
                 // try to retrieve the HitDetectionManager from the other object
                 if (other.TryGetComponent(out HitDetectionManager hitDetectionManager))
                 {
-                    if (hitDetectionManager.GetBulletAllegiance() == allegiance)
+                    if (hitDetectionManager.GetAllegiance() == allegiance)
                     {
                         Debug.Log("Prevented friendly fire");
                         // If the other object is on the same team, don't hit it

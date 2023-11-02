@@ -5,7 +5,7 @@ namespace Endsley
 {
     public class Missile : MonoBehaviour
     {
-        [SerializeField] private BulletAllegiance bulletAllegiance;
+        [SerializeField] private Allegiance bulletAllegiance;
         private GameObject target;
         private Vector3 targetPosition;
         private bool shouldTrackTarget = true;
@@ -21,7 +21,7 @@ namespace Endsley
         // Collisions will not detonate the missile before this time
         [SerializeField] private float IFFtimer = 0.25f;
 
-        public void Initialize(GameObject target, BulletAllegiance bulletAllegiance)
+        public void Initialize(GameObject target, Allegiance bulletAllegiance)
         {
             launchTime = Time.time;
             this.bulletAllegiance = bulletAllegiance;
@@ -30,7 +30,7 @@ namespace Endsley
             StartCoroutine(ArcToTarget());
         }
 
-        public void Initialize(Vector3 target, BulletAllegiance bulletAllegiance)
+        public void Initialize(Vector3 target, Allegiance bulletAllegiance)
         {
             launchTime = Time.time;
             this.bulletAllegiance = bulletAllegiance;
@@ -81,11 +81,11 @@ namespace Endsley
             if (!missileActive) return;
             Debug.Log("Missile collide: " + other.gameObject.name);
             // if other object has a hit detection manager, and the allegiance is not the same as this missile, apply damage
-            if (other.gameObject.TryGetComponent(out HitDetectionManager otherHDM) && otherHDM.GetBulletAllegiance() != bulletAllegiance)
+            if (other.gameObject.TryGetComponent(out IDamageable damageableObject) && damageableObject.GetAllegiance() != bulletAllegiance)
             {
-                Debug.Log("Missile hit " + other.gameObject.name + " with allegiance " + otherHDM.GetBulletAllegiance());
+                Debug.Log("Missile hit " + other.gameObject.name + " with allegiance " + damageableObject.GetAllegiance());
                 //TODO: Actual damage
-                otherHDM.TakeDamage(1);
+                damageableObject.TakeDamage(1);
                 Detonate();
             }
             // if IFFtimer has elapsed, detonate

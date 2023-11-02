@@ -3,7 +3,7 @@ using UnityEngine;
 
 namespace Endsley
 {
-    public enum BulletAllegiance
+    public enum Allegiance
     {
         Player,
         Enemy,
@@ -21,7 +21,7 @@ namespace Endsley
         public event Action<int> OnDamageTaken;
         [Tooltip("This is the allegiance of the object that owns this HDM. If this is null, the allegiance will be determined by the parent HDM. If there is no parent HDM, the allegiance will be determined by the HealthManager.")]
         [SerializeField]
-        private BulletAllegiance allegiance = BulletAllegiance.Unset;
+        private Allegiance allegiance = Allegiance.Unset;
 
         private void Start()
         {
@@ -37,21 +37,21 @@ namespace Endsley
                 }
             }
             Transform currentTransform = transform;
-            while (allegiance == BulletAllegiance.Unset)
+            while (allegiance == Allegiance.Unset)
             {
                 // Look for parent HDM or HealthManager
                 HitDetectionManager parentHDM = currentTransform.GetComponent<HitDetectionManager>();
                 HealthManager healthManager = currentTransform.GetComponent<HealthManager>();
 
-                if (parentHDM && parentHDM.allegiance != BulletAllegiance.Unset)
+                if (parentHDM && parentHDM.allegiance != Allegiance.Unset)
                 {
                     allegiance = parentHDM.allegiance;
                     break;
                 }
                 else if (healthManager)
                 {
-                    allegiance = healthManager.GetBulletAllegiance();
-                    if (allegiance != BulletAllegiance.Unset)
+                    allegiance = healthManager.GetAllegiance();
+                    if (allegiance != Allegiance.Unset)
                         break;
                 }
 
@@ -86,11 +86,11 @@ namespace Endsley
             }
         }
 
-        public BulletAllegiance GetBulletAllegiance()
+        public Allegiance GetAllegiance()
         {
             if (parentHDM)
             {
-                return parentHDM.GetBulletAllegiance();
+                return parentHDM.GetAllegiance();
             }
             else
             {

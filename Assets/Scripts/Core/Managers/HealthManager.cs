@@ -19,12 +19,13 @@ namespace Endsley
         [SerializeField][ReadOnly] int currentHealth;
         [SerializeField][ReadOnly] int currentShields;
         private bool isDead = false;
-        public BulletAllegiance bulletAllegiance = BulletAllegiance.Unset;
+        public Allegiance bulletAllegiance = Allegiance.Unset;
         // For all instances of damage
         public event Action<int> OnDamageTaken;
         //For health and shields specific damage (UI)
         public event Action<int> OnHealthDamageTaken;
         public event Action<int> OnShieldsDamageTaken;
+        public event Action<(int, int)> OnHitStatsChanged;
 
         internal void Start()
         {
@@ -35,7 +36,7 @@ namespace Endsley
             {
                 Debug.LogWarning("No death behavior attached.");
             }
-            if (bulletAllegiance == BulletAllegiance.Unset)
+            if (bulletAllegiance == Allegiance.Unset)
             {
                 Debug.LogWarning("No allegiance set. This object will not be able to take damage.");
             }
@@ -43,6 +44,8 @@ namespace Endsley
 
         public void TakeDamage(int damage)
         {
+            var lastHealth = currentHealth;
+            var lastShields = currentShields;
             if (!isDead)
             {
                 Debug.Log("HealthManager: Damage taken");
@@ -81,11 +84,20 @@ namespace Endsley
                     deathBehavior?.Die();
                 }
             }
+            if (lastHealth != currentHealth || lastShields != currentShields)
+            {
+                OnHitStatsChanged?.Invoke((currentHealth, currentShields));
+            }
         }
 
         public void SetHealthManagerConfig(HealthConfig healthConfig)
         {
             this.healthConfig = healthConfig;
+        }
+
+        public HealthConfig GetHealthManagerConfig()
+        {
+            return healthConfig;
         }
 
         public int GetCurrentHealth()
@@ -98,14 +110,7 @@ namespace Endsley
             return currentShields;
         }
 
-        public bool SetIsDead(bool value)
-        {
-            bool val = isDead;
-            isDead = true;
-            return val;
-        }
-
-        public BulletAllegiance GetBulletAllegiance()
+        public Allegiance GetAllegiance()
         {
             return bulletAllegiance;
         }

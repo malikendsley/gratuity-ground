@@ -105,7 +105,7 @@ public class AIMissileLauncher : MonoBehaviour, IWeapon
             Transform currentFirePoint = firePoints[fpIndex];
             GameObject missile = Instantiate(missilePrefab, currentFirePoint.position, currentFirePoint.rotation);
             // Debug.Log("Missile being initialized to fire at " + lockTarget.name + " with allegiance " + bulletAllegiance + "...");
-            missile.GetComponent<Missile>().Initialize(trackedTarget.transform.position + Random.insideUnitSphere * spread, BulletAllegiance.Enemy);
+            missile.GetComponent<Missile>().Initialize(trackedTarget.transform.position + Random.insideUnitSphere * spread, Allegiance.Enemy);
             fpIndex = (fpIndex + 1) % firePoints.Count;
 
             yield return new WaitForSeconds(launchDelay);

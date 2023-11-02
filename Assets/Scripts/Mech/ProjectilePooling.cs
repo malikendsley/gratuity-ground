@@ -22,7 +22,7 @@ namespace Endsley
             }
         }
 
-        public Bullet GetBullet(BulletAllegiance allegiance)
+        public Bullet GetBullet(Allegiance allegiance)
         {
             if (availableBullets.Count == 0)
             {

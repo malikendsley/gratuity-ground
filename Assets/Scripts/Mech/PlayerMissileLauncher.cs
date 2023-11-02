@@ -168,7 +168,7 @@ namespace Endsley
                 Transform currentFirePoint = firePoints[fpIndex];
                 GameObject missile = Instantiate(missilePrefab, currentFirePoint.position, currentFirePoint.rotation);
                 // Debug.Log("Missile being initialized to fire at " + lockTarget.name + " with allegiance " + bulletAllegiance + "...");
-                missile.GetComponent<Missile>().Initialize(lockTarget, BulletAllegiance.Player);
+                missile.GetComponent<Missile>().Initialize(lockTarget, Allegiance.Player);
                 // Cycle the fire point index
                 fpIndex = (fpIndex + 1) % firePoints.Count;
 

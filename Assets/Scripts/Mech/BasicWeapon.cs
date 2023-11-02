@@ -15,7 +15,7 @@ namespace Endsley
         [SerializeField] private float fireRate;
         [SerializeField] private float magazineSize;
         [SerializeField] private float reloadTime;
-        [SerializeField] private BulletAllegiance bulletAllegiance;
+        [SerializeField] private Allegiance bulletAllegiance;
         //HACK: go back to pooling once it's fixed
         [SerializeField] private GameObject bulletPrefab;
         [Tooltip("Set this if you want to control the slot this weapon is in (for player weapons)")]
