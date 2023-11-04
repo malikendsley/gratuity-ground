@@ -98,6 +98,14 @@ namespace Endsley
         {
             return weapons.ContainsKey(slot);
         }
+
+        public void ReloadAllWeapons()
+        {
+            foreach (var item in weapons)
+            {
+                weapons[item.Key].Reload();
+            }
+        }
     }
 
 

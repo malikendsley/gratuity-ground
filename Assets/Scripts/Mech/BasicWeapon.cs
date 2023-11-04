@@ -13,7 +13,7 @@ namespace Endsley
         [SerializeField] private Transform firePoint;
         [SerializeField] private Transform fireThrough;
         [SerializeField] private float fireRate;
-        [SerializeField] private float magazineSize;
+        [SerializeField] private int magazineSize;
         [SerializeField] private float reloadTime;
         [SerializeField] private Allegiance bulletAllegiance;
         //HACK: go back to pooling once it's fixed
@@ -41,16 +41,12 @@ namespace Endsley
         private float fireDelay;
         private float nextShotTime = 0;
         private float nextReloadTime = 0;
-        [SerializeField] float currentAmmo;
+        [SerializeField] int currentAmmo;
         private bool isReloading = false;
+
+        private WeaponsBus weaponsBus;
         #endregion
 
-        #region Events
-        public event Action<int> OnAmmoChange;
-        public event Action OnWeaponStart;
-        public event Action OnWeaponStop;
-        public event Action OnReload;
-        #endregion
         private void Start()
         {
             fireDelay = 1 / fireRate;
@@ -73,6 +69,12 @@ namespace Endsley
             else
             {
                 Debug.LogWarning("No MechWeaponManager found in the parent hierarchy. This weapon will not be managed.");
+            }
+            weaponsBus = WeaponsBusManager.Instance.GetOrCreateBus(gameObject);
+            if (weaponsBus == null)
+            {
+                Debug.LogError("Could not find weapons bus for player mech");
+                return;
             }
         }
         private void Update()
@@ -110,7 +112,13 @@ namespace Endsley
                         Debug.Log("Firing Weapon");
                         nextShotTime = Time.time + fireDelay;
                         currentAmmo--;
-                        OnAmmoChange?.Invoke((int)currentAmmo);
+                        var data = new WeaponEventData
+                        {
+                            Target = target,
+                            Weapon = this,
+                            RemainingAmmo = currentAmmo
+                        };
+                        weaponsBus.Emit(WeaponEventType.OnAmmoDecrease, data);
                     }
                     else
                     {
@@ -129,14 +137,12 @@ namespace Endsley
         #region Weapon Actions
         public void StartWeapon(bool isPerfectShot)
         {
-            OnWeaponStart?.Invoke();
             shouldFire = true;
             aimAssistOn = isPerfectShot;
         }
 
         public void StopWeapon()
         {
-            OnWeaponStop?.Invoke();
             shouldFire = false;
             aimAssistOn = false;
         }
@@ -144,6 +150,7 @@ namespace Endsley
 
         public void Reload()
         {
+            Debug.Log("BasicWeapon Reload");
             if (Time.time > nextReloadTime && !isReloading)
             {
                 StartCoroutine(ReloadAfterDelay(reloadTime));
@@ -166,12 +173,23 @@ namespace Endsley
         {
             isReloading = true;
             nextReloadTime = Time.time + delay;
-
+            var data = new WeaponEventData
+            {
+                Target = target,
+                Weapon = this,
+                RemainingAmmo = currentAmmo
+            };
+            weaponsBus.Emit(WeaponEventType.OnReloadStart, data);
             yield return new WaitForSeconds(delay);
 
             currentAmmo = magazineSize; // Fully reload
-            OnReload?.Invoke(); // Notify subscribed components
-            OnAmmoChange?.Invoke((int)currentAmmo); // Notify ammo change
+            data = new WeaponEventData
+            {
+                Target = target,
+                Weapon = this,
+                RemainingAmmo = magazineSize
+            };
+            weaponsBus.Emit(WeaponEventType.OnReloadFinish, data);
             isReloading = false;
         }
 

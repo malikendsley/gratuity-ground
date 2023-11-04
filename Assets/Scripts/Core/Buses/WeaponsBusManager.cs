@@ -6,10 +6,11 @@ namespace Endsley
 {
     public enum WeaponEventType
     {
-        OnAmmoChange,
+        OnAmmoDecrease,
         OnWeaponStart,
         OnWeaponStop,
-        OnReload,
+        OnReloadStart,
+        OnReloadFinish,
         OnLockStack,
         OnTargetChange,
         OnTargetClear,
@@ -19,6 +20,7 @@ namespace Endsley
     {
         public GameObject Target { get; set; }
         public IWeapon Weapon { get; set; }
+        public int RemainingAmmo { get; set; }
     }
     public class WeaponsBusManager : MonoBehaviour
     {

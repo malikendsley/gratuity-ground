@@ -20,6 +20,7 @@ namespace Endsley
         [SerializeField] private InputAction jumpControls;
         [SerializeField] private InputAction fire1Control;
         [SerializeField] private InputAction fire2Control;
+        [SerializeField] private InputAction reloadControl;
 
         private Action<WeaponEventData> HandleOnTargetChange;
         private Action<WeaponEventData> HandleOnWeaponClear;
@@ -51,9 +52,9 @@ namespace Endsley
                 return;
             }
 
-            if (moveControls == null || jumpControls == null || fire1Control == null || fire2Control == null)
+            if (moveControls == null || jumpControls == null || fire1Control == null || fire2Control == null || reloadControl == null)
             {
-                Debug.LogError("InputActions for movement, jump, or firing are not set up. Please assign them.");
+                Debug.LogError("Unassigned InputAction in PlayerMechControl. Please assign all InputActions.");
             }
             // TODO: remove this, the target is the destination for most weapons it needs to be set to an actual target
             HandleOnTargetChange = (WeaponEventData data) => mechWeaponManager.SetTargetForAll(data.Target);
@@ -88,6 +89,10 @@ namespace Endsley
             fire2Control.Enable();
             fire2Control.started += HandleFire2Down;
             fire2Control.canceled += HandleFire2Up;
+
+            reloadControl.Enable();
+            reloadControl.started += HandleReload;
+
         }
 
         void OnDisable()
@@ -108,6 +113,10 @@ namespace Endsley
             fire2Control.Disable();
             fire2Control.started -= HandleFire2Down;
             fire2Control.canceled -= HandleFire2Up;
+
+            reloadControl.Disable();
+            reloadControl.started -= HandleReload;
+
         }
 
         void HandleMove(InputAction.CallbackContext context)
@@ -147,6 +156,13 @@ namespace Endsley
             // Your existing logic
             mechWeaponManager.StopWeapon(2);
         }
+
+        void HandleReload(InputAction.CallbackContext context)
+        {
+            // Your existing logic
+            mechWeaponManager.ReloadAllWeapons();
+        }
+
 
         public Vector3 GetNearbyPoint(float minRadius, float maxRadius)
         {
