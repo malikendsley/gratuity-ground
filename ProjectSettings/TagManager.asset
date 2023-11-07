@@ -39,6 +39,9 @@ TagManager:
   - 
   - 
   m_SortingLayers:
+  - name: Top
+    uniqueID: 2550018691
+    locked: 0
   - name: Default
     uniqueID: 0
     locked: 0
