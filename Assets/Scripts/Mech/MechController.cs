@@ -8,6 +8,7 @@ namespace Endsley
 
         #region Serialized Fields
         [Header("Components")]
+        [SerializeField] private bool usePerspectiveControl = true;
         [SerializeField] private MechLocomotionConfig locomotionConfig;
         public MechLocomotionConfig LocomotionConfig => locomotionConfig;
 
@@ -108,13 +109,18 @@ namespace Endsley
             // Add in jump motion
             Vector3 moveVector = new(0, verticalVelocity * Time.deltaTime, 0);
             // Convert the 2 axis control vector to be relative to the camera and scale by speed
-            var adjustedControlVector = mechCamera.transform.TransformDirection(controlVector) * speed;
-            moveVector += adjustedControlVector * Time.deltaTime;
+            // if usePerspectiveControl is true
+            var adjustedControlVector = controlVector;
+            if (usePerspectiveControl)
+            {
+                adjustedControlVector = mechCamera.transform.TransformDirection(controlVector);
+            }
+            moveVector += speed * Time.deltaTime * adjustedControlVector;
             characterController.Move(moveVector);
             // Rotate the mech to face the direction of movement scaled by rotSpeed
             // (The mech model is backwards, so we need to rotate 180 degrees)
             // Don't pitch the mech, only rotate on the Y axis
-            if (controlVector.magnitude > 0)
+            if (adjustedControlVector != Vector3.zero)
             {
                 // Extract horizontal direction by projecting the control vector onto the horizontal plane
                 Vector3 horizontalDirection = Vector3.ProjectOnPlane(adjustedControlVector, Vector3.up);

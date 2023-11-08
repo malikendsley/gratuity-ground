@@ -25,10 +25,13 @@ namespace Endsley
             {
                 Debug.LogError("Not enough spawn points for the requested squad size.");
             }
+            var id = 1;
             foreach (Vector3 spawnPoint in spawnPoints)
             {
                 // Spawn the enemies, maybe from some sort of enemy spawn manager
                 GameObject enemy = Object.Instantiate(enemyPrefab, spawnPoint, Quaternion.identity, enemiesFolder);
+                // Rename the enemy to make it easier to find in the hierarchy
+                enemy.name = "Enemy " + id++;
                 // register the enemy with the enemy position tracker
                 //HACK: Formalize access to the CoM of the enemy (since the gameobject's center is in the feet)
                 if (enemy.transform.Find("CoM") == null)

@@ -31,7 +31,7 @@ namespace Endsley
             Gizmos.color = Color.red;
             Gizmos.DrawWireSphere(transform.position, waitForOtherMechsDistance);
             //Draw a wire arc in front of the object representing the angle
-
+            Gizmos.DrawWireSphere(transform.position, distanceThreshold);
         }
 
         void Start()
@@ -64,7 +64,7 @@ namespace Endsley
 
         private void OnTriggerEnter(Collider other)
         {
-            if (!waitForOtherMechs)
+            if (!waitForOtherMechs || other.gameObject == gameObject)
             {
                 return;
             }
@@ -103,6 +103,7 @@ namespace Endsley
         {
             if (active && corners.Count > 0)
             {
+
                 for (int i = 0; i < corners.Count - 1; i++)
                 {
                     Debug.DrawLine(corners[i], corners[i + 1], Color.red);
@@ -110,17 +111,18 @@ namespace Endsley
                 Debug.DrawRay(corners[currentCorner], Vector3.up * 0.5f, Color.blue);
 
                 Vector3 nextPoint = corners[currentCorner];
+                Debug.Log("Moving to " + nextPoint + "(remaining distance: " + Vector3.Distance(transform.position, nextPoint) + ")");
                 Vector3 directionToNextPoint = nextPoint - transform.position;
                 mechController.UpdateControl(new Vector2(directionToNextPoint.x, directionToNextPoint.z));
 
                 // Check if reached the current corner or if it's too close to skip
-                float distanceToNextPoint = Vector3.Distance(transform.position, nextPoint);
-                if (distanceToNextPoint < distanceThreshold || distanceToNextPoint < skipDistance)
+                if (Vector3.Distance(transform.position, nextPoint) < distanceThreshold)
                 {
-                    Debug.Log("Reached or skipped corner");
+                    Debug.Log("Reached corner");
                     currentCorner++;
                     if (currentCorner >= corners.Count)
                     {
+                        Debug.Log("Clearing path");
                         corners.Clear();  // Clear path when reached the end
                         currentCorner = 0;
                         mechController.StopMoving();
@@ -130,6 +132,7 @@ namespace Endsley
             }
             else
             {
+                Debug.Log("Not moving: active = " + active + ", corners.Count = " + corners.Count);
                 mechController.StopMoving();
             }
         }
@@ -148,6 +151,7 @@ namespace Endsley
                     corners.Clear();
                     corners.AddRange(path.corners);
                     currentCorner = 0;
+                    Debug.Log("Path calculated (" + corners.Count + " corners).");
                 }
                 else
                 {

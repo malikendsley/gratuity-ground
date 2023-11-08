@@ -465,7 +465,7 @@ MonoBehaviour:
   maxSquadCount: 5
   enemyPrefab: {fileID: 7455893552931546264, guid: 59af03aca39fe3143bd16745c29f7421,
     type: 3}
-  defaultSquadSize: 2
+  defaultSquadSize: 1
   defaultSquadSpread: 30
   playerMinSpawnDistance: 50
   playerMaxSpawnDistance: 50
@@ -722,6 +722,12 @@ NavMeshObstacle:
   m_CarveOnlyStationary: 1
   m_Center: {x: -0.58000004, y: 0.17600001, z: -0.98600006}
   m_TimeToStationary: 0.5
+--- !u!1 &69113320 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 8430505356544157118, guid: db7f873f0492a304f9f90440cd57692a,
+    type: 3}
+  m_PrefabInstance: {fileID: 4533114636412917269}
+  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &76266777
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -2262,7 +2268,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 140823369}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.00067064347, y: 0.99668264, z: -0.080963016, w: 0.008255853}
+  m_LocalRotation: {x: 0.0006706464, y: 0.99668264, z: -0.08096302, w: 0.008255889}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -3468,7 +3474,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 330585543}
   serializedVersion: 2
-  m_LocalRotation: {x: -9.58379e-10, y: 0.99398905, z: -0.10947959, w: -0.000000008701332}
+  m_LocalRotation: {x: -9.319249e-10, y: 0.99398905, z: -0.10947959, w: -0.000000008461149}
   m_LocalPosition: {x: -90, y: 9.324133, z: 19.34}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -4073,7 +4079,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 379411578}
   serializedVersion: 2
-  m_LocalRotation: {x: 0.00090682623, y: 0.99395496, z: -0.10947585, w: 0.008233272}
+  m_LocalRotation: {x: 0.0009068263, y: 0.99395496, z: -0.10947585, w: 0.0082332725}
   m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
@@ -5912,10 +5918,25 @@ PrefabInstance:
     serializedVersion: 3
     m_TransformParent: {fileID: 0}
     m_Modifications:
+    - target: {fileID: 1396283654011482716, guid: 59af03aca39fe3143bd16745c29f7421,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
+      objectReference: {fileID: 0}
     - target: {fileID: 7455893552931546264, guid: 59af03aca39fe3143bd16745c29f7421,
         type: 3}
       propertyPath: m_Name
       value: Enemy Mech
+      objectReference: {fileID: 0}
+    - target: {fileID: 7455893552931546264, guid: 59af03aca39fe3143bd16745c29f7421,
+        type: 3}
+      propertyPath: m_IsActive
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 7774606675090810286, guid: 59af03aca39fe3143bd16745c29f7421,
+        type: 3}
+      propertyPath: m_Enabled
+      value: 0
       objectReference: {fileID: 0}
     - target: {fileID: 8590976686628104301, guid: 59af03aca39fe3143bd16745c29f7421,
         type: 3}
@@ -9061,7 +9082,7 @@ MonoBehaviour:
   maxBulletIcons: 9
   bulletIconStart: {fileID: 2020492680}
   bulletIconSpacingPx: 20
-  playerWeapon: {fileID: 0}
+  playerWeapon: {fileID: 69113320}
 --- !u!114 &1009413824
 MonoBehaviour:
   m_ObjectHideFlags: 0

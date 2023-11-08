@@ -145,7 +145,7 @@ namespace Endsley
         void HandleFire1Down(InputAction.CallbackContext context)
         {
             // Your existing logic
-            Debug.Log("Fire 1 pressed");
+            // Debug.Log("Fire 1 pressed");
             mechWeaponManager.StartWeapon(1);
         }
 

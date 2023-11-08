@@ -2700,7 +2700,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 88e1954226cf60940b2ce5ac09cfabff, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  locomotionConfig: {fileID: 11400000, guid: 710c5a0d9bd693c42863d7627385037d, type: 2}
+  usePerspectiveControl: 0
+  locomotionConfig: {fileID: 11400000, guid: 3ed063a0b578d564798440bdb569fd6e, type: 2}
   characterController: {fileID: 2257656643769446214}
   mechCamera: {fileID: 0}
   groundCheck: {fileID: 5448018451544245144}
@@ -2708,7 +2709,7 @@ MonoBehaviour:
   checkMask:
     serializedVersion: 2
     m_Bits: 64
-  rotSpeed: 0
+  rotSpeed: 360
 --- !u!143 &2257656643769446214
 CharacterController:
   m_ObjectHideFlags: 0
@@ -2839,7 +2840,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   angleThreshold: 5
-  distanceThreshold: 1
+  distanceThreshold: 5
   skipDistance: 10
   navMeshSampleDistance: 5
   waitForOtherMechs: 1
