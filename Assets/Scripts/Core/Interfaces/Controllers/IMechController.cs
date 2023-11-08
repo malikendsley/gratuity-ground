@@ -9,19 +9,15 @@ namespace Endsley
         // SO
         MechLocomotionConfig LocomotionConfig { get; }
 
-        // Basic movement
-        void UpdateControl(Vector2 control);
+        // The control vector is a vector within the unit circle representing
+        // Both the direction to move in and the magnitude of the movement
+        // a mag of 1 is full speed, 0 is no movement
+        void UpdateControl(Vector2 controlVector);
         void StopMoving();
-
-        // Rotation
-        void RotateToHeading(float targetHeading); // For AI-like discrete rotation
 
         // Jumping
         void Jump();
 
-        // // Shooting and combat
-        // void Shoot();
-        // void AimAt(Vector3 target);
 
         // Status queries    
         Vector3 Position { get; }
@@ -33,7 +29,6 @@ namespace Endsley
 
         // Events for external components to subscribe
         event Action<float> OnSpeedChange;
-        event Action<float> OnRotationChange;
         event Action OnJump;
         event Action<bool> OnGroundedChange;
     }

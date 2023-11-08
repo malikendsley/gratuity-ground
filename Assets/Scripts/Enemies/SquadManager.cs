@@ -82,6 +82,7 @@ namespace Endsley
         // Spawn a new squad on the map
         public void SpawnNewSquad()
         {
+            Debug.Log("SquadManager: Spawning new squad");
             if (squads.Count >= maxSquadCount)
             {
                 Debug.Log("Max squad count reached, cannot spawn squad.");

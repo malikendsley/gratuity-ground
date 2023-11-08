@@ -15,7 +15,6 @@ namespace Endsley
         private void Awake()
         {
             mechController.OnSpeedChange += SetSpeed;
-            mechController.OnRotationChange += SetRotating;
             mechController.OnJump += () => anim.SetTrigger("Jump");
             mechController.OnGroundedChange += grounded => anim.SetBool("Grounded", grounded);
         }
@@ -43,23 +42,6 @@ namespace Endsley
             anim.SetFloat("Speed", NormalizeSpeed(speed));
             // Inspection purposes only
             this.speed = speed;
-        }
-
-        // Allows animator to react to turning (including in-place)
-        void SetRotating(float delta)
-        {
-            delta = Mathf.Abs(delta) * Mathf.Rad2Deg;
-
-            // For now, just play the step animation at a slower speed, but allow it to be overriden by faster movements (turning while walking)
-            //convert to degrees
-            if (delta < 3)
-            {
-                anim.SetBool("Rotating", false);
-            }
-            else
-            {
-                anim.SetBool("Rotating", true);
-            }
         }
 
         //TODO: Triggers for jump and bool for ground

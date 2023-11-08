@@ -36,6 +36,7 @@ namespace Endsley
             }
             else if (Instance != this)
             {
+                Debug.LogWarning("Multiple instances of WeaponsBusManager detected. Destroying the new one.");
                 Destroy(gameObject);
             }
         }

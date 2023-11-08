@@ -21,6 +21,7 @@ namespace Endsley
         [SerializeField] private InputAction fire1Control;
         [SerializeField] private InputAction fire2Control;
         [SerializeField] private InputAction reloadControl;
+        [SerializeField] private InputAction sprintControl;
 
         private Action<WeaponEventData> HandleOnTargetChange;
         private Action<WeaponEventData> HandleOnWeaponClear;
@@ -33,6 +34,7 @@ namespace Endsley
             }
             else
             {
+                Debug.LogWarning("Multiple instances of PlayerMechControl detected. Destroying the new one.");
                 Destroy(gameObject);
             }
         }
@@ -52,7 +54,7 @@ namespace Endsley
                 return;
             }
 
-            if (moveControls == null || jumpControls == null || fire1Control == null || fire2Control == null || reloadControl == null)
+            if (moveControls == null || jumpControls == null || fire1Control == null || fire2Control == null || reloadControl == null || sprintControl == null)
             {
                 Debug.LogError("Unassigned InputAction in PlayerMechControl. Please assign all InputActions.");
             }
@@ -93,6 +95,10 @@ namespace Endsley
             reloadControl.Enable();
             reloadControl.started += HandleReload;
 
+            sprintControl.Enable();
+            sprintControl.performed += HandleSprint;
+            sprintControl.canceled += HandleSprint;
+
         }
 
         void OnDisable()
@@ -117,18 +123,22 @@ namespace Endsley
             reloadControl.Disable();
             reloadControl.started -= HandleReload;
 
+            sprintControl.Disable();
+            sprintControl.performed -= HandleSprint;
+            sprintControl.canceled -= HandleSprint;
+
         }
 
         void HandleMove(InputAction.CallbackContext context)
         {
             // Your existing logic
             Vector2 moveVector = context.ReadValue<Vector2>();
+            Debug.Log("Passin in moveVector: " + moveVector);
             mechController.UpdateControl(moveVector);
         }
 
         void HandleJump(InputAction.CallbackContext context)
         {
-            // Your existing logic
             mechController.Jump();
         }
 
@@ -161,6 +171,12 @@ namespace Endsley
         {
             // Your existing logic
             mechWeaponManager.ReloadAllWeapons();
+        }
+
+        void HandleSprint(InputAction.CallbackContext context)
+        {
+            // Your existing logic
+            mechController.SetSprint(context.ReadValueAsButton());
         }
 
 

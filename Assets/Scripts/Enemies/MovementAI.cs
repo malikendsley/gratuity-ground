@@ -24,7 +24,7 @@ namespace Endsley
         private NavMeshPath path;
         private List<Vector3> corners;
         private int currentCorner = 0;
-        private MechController mechController;
+        private IMechController mechController;
 
         private void OnDrawGizmos()
         {
@@ -111,21 +111,7 @@ namespace Endsley
 
                 Vector3 nextPoint = corners[currentCorner];
                 Vector3 directionToNextPoint = nextPoint - transform.position;
-                //HACK: If one day this breaks by going away from the target, un-negate this
-                float angleToNextPoint = Vector3.SignedAngle(-transform.forward, directionToNextPoint, Vector3.up);
-
-                // If we're not looking at the target, rotate first
-                if (Mathf.Abs(angleToNextPoint) > angleThreshold)
-                {
-                    mechController.StopMoving();
-                    mechController.RotateToTarget(nextPoint);
-                }
-                // Else, move forward only if heading is correct
-                else if (Mathf.Abs(angleToNextPoint) <= angleThreshold)
-                {
-                    Debug.Log("Heading is correct");
-                    mechController.UpdateControl(new(0, 1));
-                }
+                mechController.UpdateControl(new Vector2(directionToNextPoint.x, directionToNextPoint.z));
 
                 // Check if reached the current corner or if it's too close to skip
                 float distanceToNextPoint = Vector3.Distance(transform.position, nextPoint);

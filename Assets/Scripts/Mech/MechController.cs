@@ -12,26 +12,28 @@ namespace Endsley
         public MechLocomotionConfig LocomotionConfig => locomotionConfig;
 
         [SerializeField] private CharacterController characterController;
+        [SerializeField] private Camera mechCamera;
 
         [Header("Grounding")]
         [SerializeField] private Transform groundCheck;
         [SerializeField] private float checkDistance;
         [SerializeField] private LayerMask checkMask;
-        [SerializeField] private bool usesHeading = false;
+
+        [Header("Tuning")]
+        [Tooltip("How fast the mech rotates to face the direction of movement")]
+        [SerializeField] private float rotSpeed;
         #endregion
 
         #region Input Variables
-        private float targetSpeed = 0f;
-        private float currentSpeed = 0f;
+        private Vector3 controlVector;
         private bool tryJump = false;
         #endregion
 
         #region State Variables
         private float verticalVelocity;
         private const float Gravity = 9.81f;
-        private float rotationDelta = 0f;
-        private float lastRotationDelta = 0f;
-        private float desiredHeading;
+        private float speed;
+        private bool isSprinting;
 
 
         private bool wasGrounded;
@@ -41,7 +43,6 @@ namespace Endsley
 
         #region Events
         public event Action<float> OnSpeedChange;
-        public event Action<float> OnRotationChange;
         public event Action OnJump;
         public event Action<bool> OnGroundedChange;
         #endregion
@@ -50,6 +51,11 @@ namespace Endsley
         void Start()
         {
             wasGrounded = isGrounded = Physics.CheckSphere(groundCheck.position, checkDistance, checkMask);
+            if (!mechCamera)
+            {
+                mechCamera = Camera.main;
+                Debug.LogWarning("No camera assigned to MechController. Using main camera.");
+            }
         }
 
         // Update is called once per frame
@@ -58,10 +64,7 @@ namespace Endsley
             // Controlled by Jump()
             HandleGrounding();
             // Controlled by UpdateControl()
-            HandleRot();
             HandleMovement();
-            HandleRotationTowardsDesiredHeading();
-
         }
 
         private void HandleGrounding()
@@ -88,86 +91,68 @@ namespace Endsley
             tryJump = false;
         }
 
-        private void HandleRot()
-        {
-            transform.Rotate(0, rotationDelta, 0);
-
-            if (rotationDelta != lastRotationDelta)
-            {
-                OnRotationChange?.Invoke(rotationDelta);
-                lastRotationDelta = rotationDelta;
-            }
-        }
-
         private void HandleMovement()
         {
-            float acceleration = (targetSpeed == 0f) ? locomotionConfig.deceleration : locomotionConfig.acceleration;
-            currentSpeed = Mathf.Lerp(currentSpeed, targetSpeed, acceleration * Time.deltaTime);
-            OnSpeedChange?.Invoke(currentSpeed);
-            // Add in jump motion and forward motion
-            Vector3 moveVector = new(0, verticalVelocity * Time.deltaTime, 0);
-            moveVector += currentSpeed * Time.deltaTime * transform.TransformDirection(Vector3.forward);
-            characterController.Move(moveVector);
-        }
-
-        private void HandleRotationTowardsDesiredHeading()
-        {
-            if (usesHeading)
+            float targetSpeed;
+            if (controlVector == Vector3.zero)
             {
-                float currentHeading = transform.eulerAngles.y;
-                float newHeading = Mathf.MoveTowardsAngle(currentHeading, desiredHeading, locomotionConfig.rotationSpeed * Time.deltaTime);
-                transform.eulerAngles = new Vector3(0, newHeading, 0);
+                targetSpeed = 0;
+            }
+            else
+            {
+                targetSpeed = isSprinting ? locomotionConfig.runSpeed : locomotionConfig.walkSpeed;
+            }
+            // Move speed towards target speed at acceleration rate
+            speed = Mathf.MoveTowards(speed, targetSpeed, locomotionConfig.acceleration * Time.deltaTime);
+            OnSpeedChange?.Invoke(speed);
+            // Add in jump motion
+            Vector3 moveVector = new(0, verticalVelocity * Time.deltaTime, 0);
+            // Convert the 2 axis control vector to be relative to the camera and scale by speed
+            var adjustedControlVector = mechCamera.transform.TransformDirection(controlVector) * speed;
+            moveVector += adjustedControlVector * Time.deltaTime;
+            characterController.Move(moveVector);
+            // Rotate the mech to face the direction of movement scaled by rotSpeed
+            // (The mech model is backwards, so we need to rotate 180 degrees)
+            // Don't pitch the mech, only rotate on the Y axis
+            if (controlVector.magnitude > 0)
+            {
+                // Extract horizontal direction by projecting the control vector onto the horizontal plane
+                Vector3 horizontalDirection = Vector3.ProjectOnPlane(adjustedControlVector, Vector3.up);
 
-                float rotationDelta = newHeading - currentHeading;
-                if (rotationDelta != lastRotationDelta)
-                {
-                    OnRotationChange?.Invoke(rotationDelta);
-                    lastRotationDelta = rotationDelta;
-                }
+                // Create a rotation that looks in the direction of horizontal movement
+                Quaternion targetRotation = Quaternion.LookRotation(horizontalDirection);
+                targetRotation *= Quaternion.Euler(0, 180, 0); // Compensate for the mech model being backwards
+
+                // Smoothly rotate towards the target rotation only on the Y axis
+                transform.rotation = Quaternion.RotateTowards(transform.rotation, targetRotation, rotSpeed * Time.deltaTime);
             }
         }
 
+        // Has the nice effect of natively supporting a stick
         public void UpdateControl(Vector2 ctrlVector)
         {
-            //Extract forward / backward desired motion
-            //TODO: If on subsequent mech models, controls are flipped, undo "-"
-            targetSpeed = locomotionConfig.walkSpeed * -Math.Sign(ctrlVector.y);
-            //Extract rotation desire
-            rotationDelta = ctrlVector.x * locomotionConfig.rotationSpeed * Time.deltaTime;
-        }
+            // Clamp the magnitude to 1
+            ctrlVector = Vector2.ClampMagnitude(ctrlVector, 1);
 
+            // Store the vector for use in Update()
+            controlVector = new Vector3(ctrlVector.x, 0, ctrlVector.y);
+        }
         public void StopMoving()
         {
             UpdateControl(new(0, 0));
             tryJump = false;
         }
 
-        public void RotateToHeading(float targetHeading)
+        public void SetSprint(bool sprinting)
         {
-            //convert to 360 degrees
-            targetHeading = (targetHeading + 360) % 360;
-            usesHeading = true;
-            desiredHeading = targetHeading;
+            Debug.Log("Setting sprint to " + sprinting);
+            isSprinting = sprinting;
         }
 
-        public void RotateToTarget(Vector3 target)
-        {
-            Vector3 direction = target - transform.position;
-            direction.y = 0;  // Ensure the rotation is only around the Y-axis
-
-            Quaternion targetRotation = Quaternion.LookRotation(direction, Vector3.up);
-            float targetHeading = targetRotation.eulerAngles.y + 180;  // Add 180 degrees to face away
-
-            RotateToHeading(targetHeading);
-        }
-
-        public void Jump()
-        {
-            tryJump = true;
-        }
+        public void Jump() => tryJump = true;
 
         public Vector3 Position => transform.position;
-        public float CurrentSpeed => currentSpeed;
+        public float CurrentSpeed => speed;
         public bool IsGrounded => isGrounded;
     }
 }

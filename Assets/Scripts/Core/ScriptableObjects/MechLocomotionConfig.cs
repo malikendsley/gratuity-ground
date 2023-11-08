@@ -17,9 +17,6 @@ namespace Endsley
         [Tooltip("Deceleration speed")]
         public float deceleration = 2.0f;
 
-        [Tooltip("Rotation speed of the mech")]
-        public float rotationSpeed = 200.0f;
-
         [Tooltip("How high this mech can jump")]
         public float jumpForce = 5.0f;
 

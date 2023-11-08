@@ -17,6 +17,7 @@ namespace Endsley
             }
             else
             {
+                Debug.LogWarning("Multiple instances of PlayerMechTag detected. Destroying the new one.");
                 Destroy(gameObject);
             }
         }

@@ -40,7 +40,7 @@ namespace Endsley
                 {
                     Debug.LogWarning("Removed null transform");
                 }
-                yield return new WaitForSeconds(1f); // Check every 1 second
+                yield return new WaitForSeconds(.25f); // Check every 1 second
             }
         }
         public void AddEnemy(Transform enemyTransform)

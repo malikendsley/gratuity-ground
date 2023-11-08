@@ -13,9 +13,8 @@ MonoBehaviour:
   m_Name: PlayerLocomotionConfig
   m_EditorClassIdentifier: 
   walkSpeed: 20
-  runSpeed: 20
-  acceleration: 2
-  deceleration: 5
-  rotationSpeed: 100
+  runSpeed: 30
+  acceleration: 100
+  deceleration: 100
   jumpForce: 10
   runThreshold: 10

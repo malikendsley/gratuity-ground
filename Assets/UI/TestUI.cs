@@ -48,38 +48,17 @@ namespace Endsley
 
         void Button2Clicked()
         {
-            if (testMech.TryGetComponent(out MechController mech))
-            {
-                mech.RotateToHeading(90f);
-            }
-            else
-            {
-                Debug.LogWarning("No MechController found on testMech");
-            }
+            Debug.Log("Button 2 clicked");
         }
 
         void Button3Clicked()
         {
-            if (testMech.TryGetComponent(out MechController mech))
-            {
-                mech.RotateToHeading(-90f);
-            }
-            else
-            {
-                Debug.LogWarning("No MechController found on testMech");
-            }
+            Debug.Log("Button 3 clicked");
         }
 
         void Button4Clicked()
         {
-            if (testMech.TryGetComponent(out MechController mech))
-            {
-                mech.RotateToTarget(AIBeacon.transform.position);
-            }
-            else
-            {
-                Debug.LogWarning("No MechController found on testMech");
-            }
+            Debug.Log("Button 4 clicked");
         }
 
         void Button5Clicked()
